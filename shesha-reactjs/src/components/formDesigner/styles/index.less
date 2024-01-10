@@ -21,7 +21,6 @@
   .sha-component-drag-handle {
     top: 0px;
     left: 0px;
-
   }
 
   .sidebar-container-main-area-body {
@@ -181,9 +180,8 @@
 
   .sha-form-designer {
     background-color: white;
-
     .sha-components-container {
-      border: 1px dashed #ddd;
+      // border: 1px dashed #ddd; removed since each wrapper on hover will have a border together with its parents
       border-radius: 2px;
 
       .sha-drop-hint {
@@ -210,6 +208,7 @@
     position: relative;
     margin: 4px;
     margin-left: 10px;
+    height: 100%; // this levels the sha-component with the sha-component-drag-handle
     // flex: 1; flex causes wrong formatting
     // padding: 4px;
     // padding-left: 10px;
@@ -219,9 +218,15 @@
     }
 
     &.selected {
-      border: #61affe 1px dashed;
+      border: #61affe 1px solid;
       border-radius: 4px;
       background-color: #ebf3fb;
+
+      // .sha-component-drag-handle{
+      //   &.activated {
+
+      //   }
+      // }
     }
 
     &.has-config-errors {
@@ -251,6 +256,7 @@
       height: 100%;
       position: relative;
       cursor: grab;
+      border: 1px dashed #ddd;
     }
 
     .sha-component-indicator {
@@ -271,16 +277,31 @@
       text-align: right;
       position: absolute;
       right: 5px;
-      top: 5px;
+      top: -5px;
       display: block;
       min-height: 20px;
       z-index: 1000;
     }
+    .sha-component-tool_tip {
+      text-align: left;
+      position: absolute;
+      left: 0px;
+      top: -20px;
+      width: fit-content;
+      display: block;
+      min-height: 20px;
+      background-color: rgb(125, 12, 12);
+      padding: 1px;
+      color: #ebf3fb;
+      border-radius: 4px;
+      z-index: 9999999 !important;
+    }
 
     &:not(:hover) {
-      .sha-component-controls {
-        display: none;
-      }
+      .sha-component-controls,
+      // .sha-component-tool_tip {
+      //   display: none;
+      // }
 
       .sha-component-drag-handle {
         background-color: transparent;

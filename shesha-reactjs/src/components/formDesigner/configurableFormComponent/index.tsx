@@ -125,7 +125,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
       {invalidConfiguration && <ValidationIcon validationErrors={componentModel.settingsValidationErrors} />}
       <div>
         <DragWrapper componentId={componentModel.id} componentRef={componentRef} readOnly={readOnly} >
-        <div style={{ padding: '5px 3px' }}>
+        <div>
           <ComponentRenderer id={componentModel.id} componentRef={componentRef} />
         </div>
         </DragWrapper>

@@ -1,10 +1,11 @@
 import React, { FC, MutableRefObject, PropsWithChildren, useEffect, useState } from 'react';
 import { useForm } from '@/providers/form';
 import { useMetadata } from '@/providers';
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
 import { useFormDesigner } from '@/providers/formDesigner';
 import { useDataContext } from '@/providers/dataContextProvider';
 import { DeleteFilled } from '@ant-design/icons';
+import classNames from 'classnames';
 
 interface IDragWrapperProps {
   componentId: string;
@@ -12,7 +13,12 @@ interface IDragWrapperProps {
   readOnly?: boolean;
 }
 
-export const DragWrapper: FC<PropsWithChildren<IDragWrapperProps>> = (props) => {
+export const DragWrapper: FC<PropsWithChildren<IDragWrapperProps>> = ({
+  readOnly,
+  componentId,
+  componentRef,
+  children,
+}) => {
   const { getComponentModel } = useForm();
   const { selectedComponentId, setSelectedComponent, isDebug, deleteComponent } = useFormDesigner();
 
@@ -22,40 +28,22 @@ export const DragWrapper: FC<PropsWithChildren<IDragWrapperProps>> = (props) => 
   const metadata = useMetadata(false);
   const dataContext = useDataContext(false);
 
-  const componentModel = getComponentModel(props.componentId);
-
-  const tooltip = (
-    <div>
-      {isDebug && (
-        <div>
-          <strong>Id:</strong> {componentModel.id}
-        </div>
-      )}
-      <div>
-        <strong>Type:</strong> {componentModel.type}
-      </div>
-      {Boolean(componentModel.propertyName) && (
-        <div>
-          <strong>Name:</strong> {componentModel.propertyName}
-        </div>
-      )}
-    </div>
-  );
+  const componentModel = getComponentModel(componentId);
 
   // used to update metadata, context and componentRef after adding component to form
   useEffect(() => {
-    if (selectedComponentId === props.componentId && !selected) {
-      setSelectedComponent(props.componentId, metadata?.id, dataContext, props.componentRef);
+    if (selectedComponentId === componentId && !selected) {
+      setSelectedComponent(componentId, metadata?.id, dataContext, componentRef);
     }
   }, [selected]);
 
   const onClick = (e) => {
     e.stopPropagation();
     setSelectedComponent(
-      selectedComponentId === props.componentId ? null : props.componentId,
+      selectedComponentId === componentId ? null : componentId,
       metadata?.id,
       dataContext,
-      props.componentRef
+      componentRef
     );
     setSelected(true);
   };
@@ -73,16 +61,38 @@ export const DragWrapper: FC<PropsWithChildren<IDragWrapperProps>> = (props) => 
     deleteComponent({ componentId: componentModel.id });
   };
 
+  const selectedComponent = selectedComponentId === componentId;
+
   return (
-    <div className="sha-component-drag-handle" onClick={onClick} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-      {!props?.readOnly && isOpen && (
+    <div
+      className={classNames('sha-component-drag-handle', {
+        activated: isOpen && selected,
+      })}
+      onClick={onClick}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+    >
+      {!readOnly && selectedComponent && (
         <div className="sha-component-controls">
           <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       )}
-      <Tooltip title={tooltip} placement="right" open={isOpen}>
-        {props.children}
-      </Tooltip>
+      {!readOnly && isOpen && (
+        <div className="sha-component-tool_tip">
+          {isDebug && (
+            <div>
+              <strong>Id:</strong> {componentId}
+            </div>
+          )}
+          <div>
+            <span>
+              {componentModel.type}: {componentModel.propertyName}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {children}
     </div>
   );
 };
