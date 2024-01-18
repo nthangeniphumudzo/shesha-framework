@@ -23,6 +23,8 @@ export interface IDataListItemCreateModalProps {
 
 const DataListItemCreateModal: FC<IDataListItemCreateModalProps> = (props) => {
   const {
+    id,
+    formInfo,
     data,
     markup,
     formSettings,
@@ -43,16 +45,15 @@ const DataListItemCreateModal: FC<IDataListItemCreateModalProps> = (props) => {
           mode='create'
           allowChangeMode={false}
           autoSave={false}
-          editorComponents={flatComponents}
-          displayComponents={flatComponents}
+          flatComponents={flatComponents}
           formSettings={formSettings}
         >
           <CreateModal
-            formInfo={props.formInfo}
+            formInfo={formInfo}
             loading={false}
             onToggle={onToggle}
             width={width} 
-            id={props.id}           
+            id={id}           
           />
         </DataListCrudProvider>
       )}
