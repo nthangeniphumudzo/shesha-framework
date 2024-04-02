@@ -78,7 +78,6 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
   };
   return (
     <>
-      <div className="sidebar-subheader">Data</div>
       <SearchBox value={searchText} onChange={setSearchText} placeholder="Search data properties" />
 
       {datasourcesWithVisible.length > 0 && (
