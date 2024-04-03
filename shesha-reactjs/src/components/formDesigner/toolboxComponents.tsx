@@ -48,7 +48,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
 
   let idx = 0;
   return (
-    <>
+    <div style={{margin:'-10px -8px'}}>
       <SearchBox value={searchText} onChange={setSearchText} placeholder="Search components" />
       {filteredGroups.length > 0 && (
         <Collapse activeKey={openedKeys} onChange={onCollapseChange} accordion>
@@ -82,6 +82,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
                     ghostClass={styles.shaComponentGhost}
                     onStart={onDragStart}
                     onEnd={onDragEnd}
+                    style={{margin:'-1rem -13px'}}
                   >
                     {visibleComponents.map((component, componentIndex) => {
                       idx++;
@@ -100,7 +101,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
         </Collapse>
       )}
       {filteredGroups.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Components not found" />}
-    </>
+    </div>
   );
 };
 

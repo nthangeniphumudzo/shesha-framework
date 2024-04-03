@@ -77,7 +77,7 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
     setOpenedKeys(Array.isArray(key) ? key : [key]);
   };
   return (
-    <>
+    <div style={{margin:'-10px -8px'}}>
       <SearchBox value={searchText} onChange={setSearchText} placeholder="Search data properties" />
 
       {datasourcesWithVisible.length > 0 && (
@@ -93,7 +93,7 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
             );
       
             return visibleItems.length === 0 ? null : (
-              <Panel header={header} key={dsIndex.toString()} className={classNames(styles.shaToolboxPanel, { active: ds.datasource.id === activeDataSourceId })}>
+              <Panel header={header} key={dsIndex.toString()} style={{padding:'-15px -13px',border:'2px solid red'}} className={classNames(styles.shaToolboxPanel, { active: ds.datasource.id === activeDataSourceId })}>
                 <DataSourceTree
                   items={visibleItems}
                   searchText={searchText}
@@ -107,7 +107,7 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
       {datasourcesWithVisible.length === 0 && (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Properties not found" />
       )}
-    </>
+    </div>
   );
 };
 
