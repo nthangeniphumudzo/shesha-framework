@@ -48,7 +48,8 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
     return sidebarProps
       ? (
         <Resizable
-        minWidth={'50px'}
+        // minWidth={230}
+        
   
     enable={{ top:false, right:isLeft||isRight, bottom:false, left:isLeft||isRight, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false }}
     
