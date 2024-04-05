@@ -4,6 +4,7 @@ import { ISidebarProps, SidebarPanelPosition } from './models';
 import { SidebarPanel } from './sidebarPanel';
 import { useStyles } from './styles/styles';
 import { useForm } from '@/providers/form';
+import { Resizable } from 're-resizable';
 
 
 export interface ISidebarContainerProps extends PropsWithChildren<any> {
@@ -42,8 +43,18 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
   const {formWidth,zoom}=useForm();
   const renderSidebar = (side: SidebarPanelPosition) => {
     const sidebarProps = side === 'left' ? leftSidebarProps : rightSidebarProps;
+    const isLeft = side === 'left';
+    const isRight = side === 'right';
     return sidebarProps
-      ? (<SidebarPanel {...sidebarProps} allowFullCollapse={allowFullCollapse} side={side} />)
+      ? (
+        <Resizable
+        minWidth={'50px'}
+  
+    enable={{ top:false, right:isLeft||isRight, bottom:false, left:isLeft||isRight, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false }}
+    
+  >
+      <SidebarPanel {...sidebarProps} allowFullCollapse={allowFullCollapse} side={side} />
+      </Resizable>)
       : null;
   };
 
@@ -54,7 +65,10 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
       {header && <div className={styles.sidebarContainerHeader}>{typeof header === 'function' ? header() : header}</div>}
 
       <div className={styles.sidebarContainerBody}>
-        {renderSidebar('left')}
+
+{renderSidebar('left')}
+ 
+       
 
         <div
           className={classNames(
