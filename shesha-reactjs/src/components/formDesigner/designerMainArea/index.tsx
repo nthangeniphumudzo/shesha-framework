@@ -30,12 +30,16 @@ export const DesignerMainArea: FC<IDesignerMainAreaProps> = () => {
                         title: 'Builder Widgets',
                         content: () => <Toolbox />,
                         placeholder: 'Builder Widgets',
+                        resizable:true
                     }
+
+                    
             }
             rightSidebarProps={{
                 title: () => <ComponentPropertiesTitle />,
                 content: () => <ComponentPropertiesPanel />,
                 placeholder: 'Properties',
+                resizable:true
             }}
         >
           <div style={{ width:`${magnifiedWidth}%`, zoom:`${zoom}%`, overflow:'auto', margin:'0 auto' }}>

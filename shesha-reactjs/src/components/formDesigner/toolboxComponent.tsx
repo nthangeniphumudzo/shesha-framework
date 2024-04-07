@@ -26,6 +26,7 @@ const ToolbarComponent: FC<IProps> = ({ component /*, index*/ }) => {
       </Space>
     </div>
   );
+  
 
   return (
     <div className={styles.shaToolboxComponent}>

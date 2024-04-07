@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import React, { FC, PropsWithChildren, ReactNode } from 'react';
 import { ISidebarProps, SidebarPanelPosition } from './models';
-import { SidebarPanel } from './sidebarPanel';
 import { useStyles } from './styles/styles';
-import { Resizable } from 're-resizable';
+import ResizableWrapper from './sidebarcontainerWrapper';
 
 
 export interface ISidebarContainerProps extends PropsWithChildren<any> {
@@ -39,27 +38,16 @@ export interface ISidebarContainerProps extends PropsWithChildren<any> {
   noPadding,
 }) => {
   const { styles } = useStyles();
-  const renderSidebar = (side: SidebarPanelPosition) => {
+  const RenderSidebar = (side: SidebarPanelPosition) => {
+
     const sidebarProps = side === 'left' ? leftSidebarProps : rightSidebarProps;
-    const isLeft = side === 'left';
-    const isRight = side === 'right';
+
     return sidebarProps
       ? (
-        <Resizable
-        // minWidth={230}
-        
-  
-    enable={{ top:false, right:isLeft||isRight, bottom:false, left:isLeft||isRight, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false }}
-    
-  >
-      <SidebarPanel {...sidebarProps} allowFullCollapse={allowFullCollapse} side={side} />
-      </Resizable>)
+      <ResizableWrapper  {...sidebarProps} allowFullCollapse={allowFullCollapse} side={side} />
+      )
       : null;
   };
-
-
-
-
 
   return (
     <div className={styles.sidebarContainer}>
@@ -67,10 +55,7 @@ export interface ISidebarContainerProps extends PropsWithChildren<any> {
 
       <div className={styles.sidebarContainerBody}>
 
-{renderSidebar('left')}
- 
-       
-
+        {RenderSidebar('left')}
         <div
           className={classNames(
             styles.sidebarContainerMainArea,
@@ -86,9 +71,9 @@ export interface ISidebarContainerProps extends PropsWithChildren<any> {
         >
           <div className={styles.sidebarContainerMainAreaBody}>{children}</div>
         </div>
-
-        {renderSidebar('right')}
+        {RenderSidebar('right')}
       </div>
     </div>
   );
 };
+

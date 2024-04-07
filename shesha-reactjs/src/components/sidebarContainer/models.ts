@@ -42,4 +42,9 @@ export interface ISidebarProps {
      * Whether there should no be padding
      */
      noPadding?: boolean;
+
+    /** 
+     * Whether the sidebar is resizable
+     * */
+     resizable?: boolean;
   }

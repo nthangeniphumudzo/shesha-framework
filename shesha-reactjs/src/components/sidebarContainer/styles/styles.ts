@@ -18,6 +18,8 @@ export const useStyles = createStyles(({ css, cx, token, prefixCls }) => {
     const sidebarBodyContent = "sidebar-body-content";    
     const sidebarContainerLeft = "sidebar-container-left";
     const sidebarContainerRight = "sidebar-container-right";
+    const leftResizer = "left-resizer";
+    const rightResizer = "right-resizer";
 
     const sidebarContainer = cx("sidebar-container", css`
       width: 100%;
@@ -41,7 +43,18 @@ export const useStyles = createStyles(({ css, cx, token, prefixCls }) => {
         display: flex;
         position: relative;
         width: 100%;
-    
+         .${leftResizer} {
+          &:hover {
+            cursor: e-resize;
+          
+          }
+         }
+         .${rightResizer} {
+          &:hover {
+            cursor: w-resize;
+          
+          }
+         }
         .${sidebarContainerLeft},
         .${sidebarContainerRight} {
           &.allow-full-collapse {
@@ -196,5 +209,7 @@ export const useStyles = createStyles(({ css, cx, token, prefixCls }) => {
         sidebarBodyContent,
         sidebarContainerLeft,
         sidebarContainerRight,
+        leftResizer,
+        rightResizer
     };
 });

@@ -93,7 +93,7 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
             );
       
             return visibleItems.length === 0 ? null : (
-              <Panel header={header} key={dsIndex.toString()} style={{padding:'-15px -13px',border:'2px solid red'}} className={classNames(styles.shaToolboxPanel, { active: ds.datasource.id === activeDataSourceId })}>
+              <Panel header={header} key={dsIndex.toString()} className={classNames(styles.shaToolboxPanel, { active: ds.datasource.id === activeDataSourceId })}>
                 <DataSourceTree
                   items={visibleItems}
                   searchText={searchText}
