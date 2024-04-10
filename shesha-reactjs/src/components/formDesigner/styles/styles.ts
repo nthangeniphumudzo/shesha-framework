@@ -9,13 +9,16 @@ export const useStyles = () => {
 
     const sidebarContainerMainAreaBody = "sidebar-container-main-area-body";
     const shaDesignerToolbar = "sha-designer-toolbar";
+    const shaToolboxComponents = "sha-toolbox-components";
     const shaDesignerToolbarLeft = "sha-designer-toolbar-left";
     const shaDesignerToolbarRight = "sha-designer-toolbar-right";
     const shaDesignerCanvasConfig = "sha-designer-canvas-config";
 
+
     const shaDesignerToolbox = "sha-designer-toolbox";
     const shaDatasourceTree = "sha-datasource-tree";
     const shaToolboxComponent = "sha-toolbox-component";
+    const shaToolboxSortable= "shaToolboxSortable";
     const shaComponentTitle = "sha-component-title";
     const shaComponentSearch = "sha-component-search";
     const shaToolboxPanel = "sha-toolbox-panel";
@@ -51,6 +54,8 @@ export const useStyles = () => {
             shaDesignerToolbarRight,
             shaDesignerCanvasConfig,
             shaDesignerToolbox,
+            shaToolboxComponents,
+            shaToolboxSortable,
             sidebarHeaderTitle,
             shaDesignerHeader,
             shaComponentGhost,
@@ -88,6 +93,8 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
         shaDesignerToolbarRight,
         shaDesignerCanvasConfig,
         shaDesignerToolbox,
+        shaToolboxComponents,
+        shaToolboxSortable,
         sidebarHeaderTitle,
         shaDesignerHeader,
         shaComponentGhost,
@@ -150,6 +157,9 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
                 }
             }
         }
+        .${shaToolboxComponents}{
+            margin:-0.5rem;
+        }
         .${shaDesignerToolbar} {
             background: white;
             padding: 12px;
@@ -179,10 +189,16 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
 ;            }
         }
         .${shaDesignerToolbox} {
+            .${shaToolboxSortable}{
+                margin:-0.8rem;
+                margin-bottom: -1rem;
+            }
             .${shaDatasourceTree} {
                 .${prefixCls}-tree-switcher-noop {
                     display: none;
                 }
+                margin-top: -0.8rem ;
+                margin-left: -0.8rem ;
         
                 .${shaToolboxComponent} {
                     margin: 0;
@@ -192,8 +208,8 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
                     overflow: hidden;
                     max-width: 225px;
                     text-overflow: ellipsis;
-               
-        
+                   
+                
                     .${shaComponentTitle} {
                         margin-right: 10px;
                     }

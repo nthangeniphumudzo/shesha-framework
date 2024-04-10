@@ -36,6 +36,8 @@ function GenericSettingsForm<TModel extends IConfigurableFormComponent>({
     form.resetFields();
   }, []);
 
+
+
   const linkToModelMetadata = (metadata: IPropertyMetadata, settingsForm: ConfigurableFormInstance) => {
     const currentModel = form.getFieldsValue() as TModel;
 
@@ -72,7 +74,7 @@ function GenericSettingsForm<TModel extends IConfigurableFormComponent>({
       labelCol={layoutSettings?.labelCol}
       wrapperCol={layoutSettings?.wrapperCol}
       layout={layoutSettings?.layout}
-
+      
       mode={readonly ? "readonly" : "edit"}
       form={form}
       onFinish={onSave}

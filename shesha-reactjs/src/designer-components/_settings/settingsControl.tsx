@@ -71,12 +71,11 @@ export const SettingsControl: FC<ISettingsControlProps> = (props) => {
     <div className={mode === 'code' ? styles.contentCode : styles.contentJs}>
       <Button
         hidden={props.readOnly}
-        shape="round"
         className={styles.jsSwitch}
+        shape='round'
         type='primary'
         danger={mode === 'value' && !!code}
         ghost
-        size='small'
         onClick={onSwitchMode}
       >
         {mode === 'code' ? 'Value' : 'JS'}

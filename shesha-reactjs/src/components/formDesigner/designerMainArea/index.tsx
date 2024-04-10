@@ -37,7 +37,10 @@ export const DesignerMainArea: FC<IDesignerMainAreaProps> = () => {
             }
             rightSidebarProps={{
                 title: () => <ComponentPropertiesTitle />,
-                content: () => <ComponentPropertiesPanel />,
+                content: () =>{
+                    return <div ><ComponentPropertiesPanel/></div>;
+                },
+     
                 placeholder: 'Properties',
                 resizable:true
             }}

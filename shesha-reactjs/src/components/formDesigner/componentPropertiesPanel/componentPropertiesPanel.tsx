@@ -19,6 +19,7 @@ export interface IComponentPropertiesEditorProps {
 }
 
 const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
+
   return ({ readOnly: readonly, model, onSave, onCancel, onValuesChange, toolboxComponent, formRef, propertyFilter, layoutSettings }) => {
     return (
       <GenericSettingsForm
@@ -66,6 +67,7 @@ const buildEditor = ({ toolboxComponent, readOnly, metaProvider, componentModel,
   return (
     <MetadataContext.Provider value={metaProvider}>
       <React.Fragment>
+        <div style={{margin:'-8px'}}>
         {settingsFormFactory({
           readOnly: readOnly,
           model: componentModel,
@@ -77,6 +79,8 @@ const buildEditor = ({ toolboxComponent, readOnly, metaProvider, componentModel,
           propertyFilter,
           layoutSettings,
         })}
+        </div>
+    
       </React.Fragment>
     </MetadataContext.Provider>
   );

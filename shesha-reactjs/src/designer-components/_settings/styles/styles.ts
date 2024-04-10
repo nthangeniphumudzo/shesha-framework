@@ -41,6 +41,7 @@ export const useStyles = createStyles(({ css, cx, responsive, prefixCls }) => {
         // special style when inside the sidebar
         .sidebar-container & {
             padding-top: 4px;
+           
         }
     `);
     const jsContent = cx(css`
@@ -53,6 +54,8 @@ export const useStyles = createStyles(({ css, cx, responsive, prefixCls }) => {
         .sidebar-container & {
             margin-right: 0;
             margin-left: 0;   
+        
+      
         }        
     `);
     

@@ -50,6 +50,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
       <ParentProvider model={{ readOnly: readOnly }}>
         <ComponentPropertiesEditor
           key={id}
+          
           componentModel={componentModel}
           readOnly={readOnly}
           onSave={onSave}
@@ -57,7 +58,9 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
           toolboxComponent={toolboxComponent}
         />
       </ParentProvider>
+    
     </SourceFilesFolderProvider>
+   
   );
 };
 

@@ -33,8 +33,9 @@ const ResizableWrapper: FC<SidebarPanelProps> = ({...props}) => {
 
     return (
       <Resizable
-        minWidth={230}
-        maxWidth={300}
+        minWidth={220}
+        maxWidth={350}
+        defaultSize={{width:240,height:'100%'}}
         className={isLeft?styles.leftResizer:styles.rightResizer}
         boundsByDirection={true}
         enable={{ right:true,left:!isLeft}}>

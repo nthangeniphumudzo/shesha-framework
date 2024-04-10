@@ -23,10 +23,10 @@ export const useStyles = createStyles(({ css, cx, prefixCls }) => {
     const title = "title";
 
     const shaStyleBox = cx("sha-style-box", css`
-        max-height: 200px;
-        height: auto;  
+        height: 180px;
         overflow: hidden;
-        width: auto;
+        width: 180px;
+        
       
         .${prefixCls}-input {
           border: none;

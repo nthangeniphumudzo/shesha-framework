@@ -78,15 +78,20 @@ const SettingsFormComponent: FC<ISettingsFormItemProps> = (props) => {
                 hidden: props.hidden
             }}
             className='sha-js-label'
+           
         >
             {(value, onChange) => {
                 return (
-                    <SettingsControl
+                    <div style={{border:'1px solid green',padding:'-15px',fontSize:'12px'}} className='setting-side'>
+
+           <SettingsControl
                         propertyName={props.name.toString()}
                         mode={'value'}
                         onChange={onChange}
                         value={value}
                         readOnly={readOnly}
+                        
+                        
                     >
                         {(value, onChange) => {
                             return cloneElement(
@@ -106,6 +111,8 @@ const SettingsFormComponent: FC<ISettingsFormItemProps> = (props) => {
                                 });
                         }}
                     </SettingsControl>
+                    </div>
+                
                 );
             }}
         </ConfigurableFormItem>

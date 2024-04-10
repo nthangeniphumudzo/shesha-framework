@@ -48,7 +48,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
 
   let idx = 0;
   return (
-    <div style={{margin:'-10px -8px'}}>
+    <div className={styles.shaToolboxComponents}>
       <SearchBox value={searchText} onChange={setSearchText} placeholder="Search components" />
       {filteredGroups.length > 0 && (
         <Collapse activeKey={openedKeys} onChange={onCollapseChange} accordion>
@@ -82,7 +82,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
                     ghostClass={styles.shaComponentGhost}
                     onStart={onDragStart}
                     onEnd={onDragEnd}
-                    style={{margin:'-1rem -13px'}}
+                    className={styles.shaToolboxSortable}
                   >
                     {visibleComponents.map((component, componentIndex) => {
                       idx++;
