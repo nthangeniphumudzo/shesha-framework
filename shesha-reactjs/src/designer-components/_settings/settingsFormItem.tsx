@@ -82,7 +82,6 @@ const SettingsFormComponent: FC<ISettingsFormItemProps> = (props) => {
         >
             {(value, onChange) => {
                 return (
-                    <div style={{border:'1px solid green',padding:'-15px',fontSize:'12px'}} className='setting-side'>
 
            <SettingsControl
                         propertyName={props.name.toString()}
