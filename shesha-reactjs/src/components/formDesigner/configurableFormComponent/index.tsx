@@ -15,7 +15,8 @@ import {
   EditOutlined,
   EyeInvisibleOutlined,
   FunctionOutlined,
-  StopOutlined
+  StopOutlined,
+  WarningOutlined
 } from '@ant-design/icons';
 import { getActualPropertyValue, useAvailableConstantsData } from '@/providers/form/utils';
 import { isPropertySettings } from '@/designer-components/_settings/utils';
@@ -78,6 +79,11 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
     return result;
   }, [isSelected]);
 
+  const configurationStatus = componentModel.configurationStatus;
+
+  console.log('componentModel', { ...configurationStatus });
+
+
   return (
     <div
       className={classNames(styles.shaComponent, {
@@ -108,13 +114,21 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
             <EditOutlined />
           </Tooltip>
         </Show>
-      </span>
 
+
+      </span>
       {invalidConfiguration && <ValidationIcon validationErrors={componentModel.settingsValidationErrors} />}
       <div>
         <DragWrapper componentId={componentModel.id} componentRef={componentRef} readOnly={readOnly} >
-          <div style={{ padding: '5px 3px' }}>
-            <FormComponent componentModel={componentModel} componentRef={componentRef} />
+          <div style={configurationStatus?.isFullyConfigured ? { padding: '5px 3px', border: '0.5px dashed red' } : null}>
+            {configurationStatus?.isFullyConfigured ?
+              <Tooltip title={configurationStatus?.error}>
+                <WarningOutlined style={{ color: 'red', marginLeft: '5px', marginRight: '10px' }} size={40} />
+                <span>{configurationStatus?.error}</span>
+              </Tooltip>
+              :
+              <FormComponent componentModel={componentModel} componentRef={componentRef} />
+            }
           </div>
         </DragWrapper>
       </div>
@@ -141,5 +155,5 @@ export const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({
     <CustomErrorBoundary>
       <ComponentRenderer componentModel={componentModel} componentRef={componentRef} />
     </CustomErrorBoundary>
-  ); 
+  );
 };

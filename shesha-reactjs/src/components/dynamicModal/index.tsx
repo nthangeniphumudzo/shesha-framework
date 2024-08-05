@@ -42,7 +42,7 @@ export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = (props
       onCancel={hideForm}
       footer={footer}
       destroyOnClose
-      // width={width ? width : 800}
+      okButtonProps={{ disabled: true }}
       width={isSmall ? '90%' : width || 900}
       maskClosable={false}
     >

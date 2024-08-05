@@ -28,21 +28,23 @@ const RefListStatusComponent: IToolboxComponent<IRefListStatusProps> = {
 
     const isVisibleByCondition = executeCustomExpression(model?.customVisibility, true, formData, globalState);
 
-    const style = {...getStyle(model.style, data, globalState)};
+    const style = { ...getStyle(model.style, data, globalState) };
 
-    if (!isVisibleByCondition && formMode !== 'designer') return null;
-
-    if (formMode === 'designer' && !referenceListId) {
-      return (
-        <Alert
-          showIcon
-          message="ReflistStatus configuration is incomplete"
-          description="Please make sure that you've select a reference list."
-          type="warning"
-        />
-      );
+    if (!isVisibleByCondition && formMode !== 'designer') {
+      return null;
     }
-    
+
+    // if (formMode === 'designer' && !referenceListId) {
+    //   return (
+    //     <Alert
+    //       showIcon
+    //       message="ReflistStatus configuration is incomplete"
+    //       description="Please make sure that you've select a reference list."
+    //       type="warning"
+    //     />
+    //   );
+    // }
+
     return (
       <ConfigurableFormItem model={{ ...model }}>
         {(value) => {
@@ -89,7 +91,7 @@ const RefListStatusComponent: IToolboxComponent<IRefListStatusProps> = {
     })
     .add<IRefListStatusProps>(2, (prev) => migratePropertyName(migrateCustomFunctions(prev)))
     .add<IRefListStatusProps>(3, (prev) => migrateVisibility(prev))
-    .add<IRefListStatusProps>(4, (prev) => ({...migrateFormApi.eventsAndProperties(prev)}))
+    .add<IRefListStatusProps>(4, (prev) => ({ ...migrateFormApi.eventsAndProperties(prev) }))
   ,
   settingsFormMarkup: RefListStatusSettingsForm,
   validateSettings: (model) => validateConfigurableComponentSettings(RefListStatusSettingsForm, model),

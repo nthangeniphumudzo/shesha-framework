@@ -56,11 +56,11 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   name: 'Entity Picker',
   icon: <EllipsisOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
-   Factory: ({ model }) => {
+  Factory: ({ model }) => {
     const form = useForm();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
-    const { data: formData } = useFormData();
+    const { data: formData, } = useFormData();
     const eventProps = {
       model,
       form: getFormApi(form),
@@ -86,12 +86,12 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       ];
     }, [filters]);
 
-    const incomeValueFunc: IncomeValueFunc = useCallback( (value: any, args: any) => {
+    const incomeValueFunc: IncomeValueFunc = useCallback((value: any, args: any) => {
       if (model.valueFormat === 'entityReference') {
         return !!value ? value.id : null;
       }
       if (model.valueFormat === 'custom') {
-        return executeExpression<string>(model.incomeCustomJs, {...args, value}, null, null );
+        return executeExpression<string>(model.incomeCustomJs, { ...args, value }, null, null);
       }
       return value;
     }, [model.valueFormat, model.incomeCustomJs]);
@@ -99,16 +99,24 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
     const outcomeValueFunc: OutcomeValueFunc = useCallback((value: any, args: any) => {
       if (model.valueFormat === 'entityReference') {
         return !!value
-          ? {id: value.id, _displayName: value[model.displayEntityKey] ??  value._displayName, _className: model.entityType}
+          ? { id: value.id, _displayName: value[model.displayEntityKey] ?? value._displayName, _className: model.entityType }
           : null;
       }
       if (model.valueFormat === 'custom') {
-        return executeExpression(model.outcomeCustomJs, {...args, value}, null, null );
+        return executeExpression(model.outcomeCustomJs, { ...args, value }, null, null);
       }
       return !!value ? value.id : null;
     }, [model.valueFormat, model.outcomeCustomJs, model.displayEntityKey, model.entityType]);
 
+
+
     if (form.formMode === 'designer' && !model.entityType) {
+      model.configurationStatus = {
+        isFullyConfigured: true,
+        error: 'Please make sure that you have specified "entityType" property.'
+      };
+
+
       return (
         <Alert
           showIcon
@@ -133,41 +141,41 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
               onChange(...args);
           };
           return (
-          <EntityPicker
-            incomeValueFunc={incomeValueFunc}
-            outcomeValueFunc={outcomeValueFunc}
+            <EntityPicker
+              incomeValueFunc={incomeValueFunc}
+              outcomeValueFunc={outcomeValueFunc}
 
-            placeholder={model.placeholder}
-            style={computedStyle}
-            formId={model.id}
-            readOnly={model.readOnly}
-            displayEntityKey={model.displayEntityKey}
-            entityType={model.entityType}
-            filters={entityPickerFilter}
-            mode={model.mode}
-            addNewRecordsProps={
-              model.allowNewRecord
-                ? {
-                  modalFormId: model.modalFormId,
-                  modalTitle: model.modalTitle,
-                  showModalFooter: model.showModalFooter,
-                  submitHttpVerb: model.submitHttpVerb,
-                  onSuccessRedirectUrl: model.onSuccessRedirectUrl,
-                  modalWidth: customWidth ? `${customWidth}${widthUnits}` : modalWidth,
-                  buttons: model?.buttons,
-                  footerButtons: model?.footerButtons
-                  
-                }
-                : undefined
-            }
-            name={model?.componentName}
-            width={width}
-            configurableColumns={model.items ?? []}
-            value={value}
-            onChange={onChangeInternal}
-            size={model.size}
-          />
-        );
+              placeholder={model.placeholder}
+              style={computedStyle}
+              formId={model.id}
+              readOnly={model.readOnly}
+              displayEntityKey={model.displayEntityKey}
+              entityType={model.entityType}
+              filters={entityPickerFilter}
+              mode={model.mode}
+              addNewRecordsProps={
+                model.allowNewRecord
+                  ? {
+                    modalFormId: model.modalFormId,
+                    modalTitle: model.modalTitle,
+                    showModalFooter: model.showModalFooter,
+                    submitHttpVerb: model.submitHttpVerb,
+                    onSuccessRedirectUrl: model.onSuccessRedirectUrl,
+                    modalWidth: customWidth ? `${customWidth}${widthUnits}` : modalWidth,
+                    buttons: model?.buttons,
+                    footerButtons: model?.footerButtons
+
+                  }
+                  : undefined
+              }
+              name={model?.componentName}
+              width={width}
+              configurableColumns={model.items ?? []}
+              value={value}
+              onChange={onChangeInternal}
+              size={model.size}
+            />
+          );
         }}
       </ConfigurableFormItem>
     );
@@ -190,6 +198,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       const useExpression = Boolean(result['useExpression']);
       delete result['useExpression'];
 
+
       if (useExpression) {
         const migratedExpression = migrateDynamicExpression(prev.filters);
         result.filters = migratedExpression;
@@ -202,12 +211,12 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
     .add<IEntityPickerComponentProps>(6, (prev) => migrateReadOnly(prev))
     .add<IEntityPickerComponentProps>(7, (prev, context) => ({
       ...prev,
-      valueFormat: prev.valueFormat  ??
+      valueFormat: prev.valueFormat ??
         context.isNew
+        ? 'simple'
+        : prev['useRawValue'] === true
           ? 'simple'
-          : prev['useRawValue'] === true 
-            ? 'simple' 
-            : 'entityReference',
+          : 'entityReference',
     }))
     .add<IEntityPickerComponentProps>(8, (prev, context) => ({
       ...prev,
@@ -215,7 +224,14 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
         ? 'default'
         : prev.footerButtons ?? prev.showModalFooter ? 'default' : 'none',
     }))
-    .add<IEntityPickerComponentProps>(9, (prev) => ({...migrateFormApi.eventsAndProperties(prev)}))
+    .add<IEntityPickerComponentProps>(9, (prev) => ({ ...migrateFormApi.eventsAndProperties(prev) }))
+    .add<IEntityPickerComponentProps>(10, (prev) => ({
+      ...prev,
+      configurationStatus: {
+        isFullyConfigured: !prev.entityType,
+        error: 'Please make sure that you have specified "entityType" property.'
+      }
+    }))
   ,
   settingsFormMarkup: entityPickerSettings,
   validateSettings: (model) => validateConfigurableComponentSettings(entityPickerSettings, model),
@@ -226,17 +242,17 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       valueFormat: 'simple',
     };
   },
-  getFieldsToFetch: (propertyName, rawModel)  => {
-      if (rawModel.valueFormat === 'entityReference') {
-        return [
-          `${propertyName}.id`,
-          rawModel.displayEntityKey
-            ? `${propertyName}.${rawModel.displayEntityKey}`
-            : `${propertyName}._displayName`,
-          `${propertyName}._className`
-        ];
-      }
-      return null;
+  getFieldsToFetch: (propertyName, rawModel) => {
+    if (rawModel.valueFormat === 'entityReference') {
+      return [
+        `${propertyName}.id`,
+        rawModel.displayEntityKey
+          ? `${propertyName}.${rawModel.displayEntityKey}`
+          : `${propertyName}._displayName`,
+        `${propertyName}._className`
+      ];
+    }
+    return null;
   },
 };
 

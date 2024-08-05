@@ -28,6 +28,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     event.preventDefault();
     try {
       if (actionConfiguration) {
+        console.log('Action configuration:', actionConfiguration);
         if (['Show Dialog', 'Show Confirmation Dialog'].includes(actionConfiguration?.actionName)) {
           setModal(true);
         }
