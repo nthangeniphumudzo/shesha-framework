@@ -49,6 +49,8 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
   const componentEditModeFx = isPropertySettings(componentModel.editMode);
   const componentEditMode = getActualPropertyValue(componentModel, allData, 'editMode')?.editMode as EditMode;
 
+  const isFullyConfigured = getActualPropertyValue(componentModel, allData, 'requiredConfigs')?.requiredConfigs?.every(x => !!componentModel?.[x]);
+
   const actionText1 = (hiddenFx ? 'hidden' : '') + (hiddenFx && componentEditModeFx ? ' and ' : '') + (componentEditModeFx ? 'disabled' : '');
   const actionText2 = (hiddenFx ? 'showing' : '') + (hiddenFx && componentEditModeFx ? '/' : '') + (componentEditModeFx ? 'enabled' : '');
 
@@ -78,6 +80,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
     return result;
   }, [isSelected]);
 
+
   return (
     <div
       className={classNames(styles.shaComponent, {
@@ -92,7 +95,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
           </Tooltip>
         </Show>
 
-        <Show when={!hiddenFx && hidden}>
+        <Show when={(!hiddenFx && hidden) || isFullyConfigured}>
           <Tooltip title="This component is hidden. It's now showing because we're in a designer mode">
             <EyeInvisibleOutlined />
           </Tooltip>
@@ -141,5 +144,5 @@ export const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({
     <CustomErrorBoundary>
       <ComponentRenderer componentModel={componentModel} componentRef={componentRef} />
     </CustomErrorBoundary>
-  ); 
+  );
 };
