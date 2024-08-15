@@ -17,7 +17,7 @@ export interface ISubmitActionArguments {
 }
 
 export const SubmitActionArgumentsMarkup = new DesignerToolbarSettings()
-  .addCheckbox({ id: nanoid(), propertyName: 'validateFields', parentId: 'root', label: 'Validate fields', defaultValue: false})
+  .addCheckbox({ id: nanoid(), propertyName: 'validateFields', parentId: 'root', label: 'Validate fields', defaultValue: false })
   .toJson();
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
@@ -137,12 +137,12 @@ export interface IComponentMetadata {
  */
 export interface IConfigurableFormComponent
   extends IFormComponentContainer,
-    IHasVersion,
-    IComponentBindingProps,
-    IComponentLabelProps,
-    IComponentVisibilityProps,
-    IComponentRuntimeProps,
-    IComponentMetadata {
+  IHasVersion,
+  IComponentBindingProps,
+  IComponentLabelProps,
+  IComponentVisibilityProps,
+  IComponentRuntimeProps,
+  IComponentMetadata {
   /** Type of the component */
   type: string;
 
@@ -181,7 +181,7 @@ export interface IConfigurableFormComponent
 
   /** Default css style applied as string */
   stylingBox?: string;
-  
+
   noDataText?: string;
 
   noDataIcon?: string;
@@ -189,6 +189,9 @@ export interface IConfigurableFormComponent
   noDataSecondaryText?: string;
 
   permissions?: string[];
+
+  requiredConfigs?: string[];
+
 }
 
 export interface IConfigurableFormComponentWithReadOnly extends Omit<IConfigurableFormComponent, 'editMode'> {
