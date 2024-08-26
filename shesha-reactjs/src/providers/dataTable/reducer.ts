@@ -364,16 +364,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
     ) => {
       const { payload: columnIdToToggle } = action;
 
-      if (state?.columns.find((c) => c.columnType === 'crud-operations')) {
-        const crudColumn = state.columns.find((c) => c.columnType === 'crud-operations');
-        const crudColumnIndex = state.columns.findIndex((c) => c.columnType === 'crud-operations');
-        state.columns[crudColumnIndex] = {
-          ...crudColumn,
-          maxWidth: crudColumn.maxWidth / 2,
-          minWidth: crudColumn.minWidth / 2,
-        };
-      }
-
       return {
         ...state,
         columns: state.columns.map(({ id, show, ...rest }) => {

@@ -222,11 +222,11 @@ export const DataTable: FC<Partial<IIndexTableProps>> = ({
   const onNewRowInitialize = useMemo<RowDataInitializer>(() => {
     const result: RowDataInitializer = props.onNewRowInitialize
       ? () => {
-          // TODO: replace formData and globalState with accessors (e.g. refs) and remove hooks to prevent unneeded re-rendering
-          //return onNewRowInitializeExecuter(formData, globalState);
-          const result = onNewRowInitializeExecuter(formApi, globalState, axiosHttp(backendUrl), moment, appContextData);
-          return Promise.resolve(result);
-        }
+        // TODO: replace formData and globalState with accessors (e.g. refs) and remove hooks to prevent unneeded re-rendering
+        //return onNewRowInitializeExecuter(formData, globalState);
+        const result = onNewRowInitializeExecuter(formApi, globalState, axiosHttp(backendUrl), moment, appContextData);
+        return Promise.resolve(result);
+      }
       : () => {
         return Promise.resolve({});
       };
@@ -279,6 +279,7 @@ export const DataTable: FC<Partial<IIndexTableProps>> = ({
       globalState
     ),
     inlineEditMode,
+    totalVisibleColumns: columns?.length,
     formMode,
     canAdd: evaluateYesNoInheritJs(props.canAddInline, props.canAddInlineExpression, formMode, formData, globalState),
   });
@@ -301,6 +302,7 @@ export const DataTable: FC<Partial<IIndexTableProps>> = ({
       ),
       inlineEditMode,
       formMode,
+      totalVisibleColumns: columns?.length,
       canAdd: evaluateYesNoInheritJs(props.canAddInline, props.canAddInlineExpression, formMode, formData, globalState),
       onNewRowInitialize,
     };
@@ -328,6 +330,7 @@ export const DataTable: FC<Partial<IIndexTableProps>> = ({
               canDoubleWidth: widthOptions.canDoubleWidth,
               canDivideByThreeWidth: widthOptions.canDivideByThreeWidth,
               canTripleWidth: widthOptions.canTripleWidth,
+              columnsChanged: widthOptions.columnsChanged,
             }
           );
           column.minWidth = minWidth;

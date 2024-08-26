@@ -261,6 +261,7 @@ export const DataTableProviderWithRepository: FC<PropsWithChildren<IDataTablePro
     dispatch(changePageSizeAction(val));
   };
 
+
   useEffect(() => {
     // sync page size on settings change
     if (state.selectedPageSize !== initialPageSize) {
@@ -564,6 +565,7 @@ export const DataTableProviderWithRepository: FC<PropsWithChildren<IDataTablePro
   };
 
   const registerConfigurableColumns = (ownerId: string, configurableColumns: IConfigurableColumnsProps[]) => {
+    console.log('registerConfigurableColumns', configurableColumns);
     dispatch((dispatchThunk, _getState) => {
       dispatchThunk(registerConfigurableColumnsAction({ ownerId, columns: configurableColumns }));
 
