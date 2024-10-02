@@ -62,6 +62,10 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
               key: 'step1',
               components: [],
               itemType: 'item',
+              footer: {
+                id: nanoid(),
+                components: []
+              },
             },
           ],
         };

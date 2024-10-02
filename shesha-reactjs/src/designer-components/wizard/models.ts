@@ -36,6 +36,10 @@ export interface IWizardStepProps {
   permissions?: string[];
   components?: IConfigurableFormComponent[];
   childItems?: IWizardStepProps[];
+  footer?: {
+    id: string;
+    components: IConfigurableFormComponent[];
+  };
 
   onBeforeRenderActionConfiguration?: IConfigurableActionConfiguration;
 
@@ -60,6 +64,11 @@ export interface IWizardSequence {
 
 export interface IStepProps extends StepProps {
   content?: JSX.Element;
+  footer?: {
+    id?: string;
+    components: IConfigurableFormComponent[];
+  };
+
 }
 
 export interface IWizardComponentProps extends Omit<IConfigurableFormComponent, 'size'>, Pick<StepProps, 'status'> {

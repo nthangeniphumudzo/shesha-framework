@@ -31,6 +31,7 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
     } = model;
 
     const steps = useMemo(() => {
+        console.log('visibleSteps :::', { ...model });
         return visibleSteps?.map<IStepProps>(({ id, title, subTitle, description, icon, customEnabled, status }, index) => {
             const isDisabledByCondition = !executeBooleanExpression(customEnabled, true) && formMode !== 'designer';
             const iconProps = icon ? { icon: <ShaIcon iconName={icon as any} /> } : {};
@@ -60,6 +61,9 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
     if (model?.hidden) return null;
     const btnStyle = getWizardButtonStyle(buttonsLayout);
 
+
+    console.log('model-steps :::', { ...visibleSteps[current], id: visibleSteps[current]?.footer?.id });
+
     return (
         <ParentProvider model={model}>
             <div className={styles.shaWizard} style={getLayoutStyle(model, { data, globalState })}>
@@ -83,7 +87,10 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
                             left: buttonsLayout === 'left',
                             right: buttonsLayout === 'right',
                         })}
+                        style={{ border: '4px solid green' }}
                     >
+
+
                         <ConditionalWrap
                             condition={splitButtons}
                             wrap={(children) => (
@@ -92,6 +99,7 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
                                 </Space>
                             )}
                         >
+
                             {current > 0 && (
                                 <Button
                                     style={btnStyle('back')}
@@ -112,7 +120,13 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
                                 </Button>
                             )}
                         </ConditionalWrap>
-
+                        <div style={{
+                            border: '2px solid red'
+                        }}>
+                            <ParentProvider model={{ ...visibleSteps[current], id: visibleSteps[current]?.footer?.id }} >
+                                <ComponentsContainer containerId={visibleSteps[current]?.footer?.id} />
+                            </ParentProvider>
+                        </div>
                         <ConditionalWrap
                             condition={splitButtons}
                             wrap={(children) => (
