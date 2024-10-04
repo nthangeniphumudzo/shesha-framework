@@ -16,7 +16,7 @@ export interface IParentProviderStateContext {
   unRegisterChild: (input: IParentProviderStateContext) => void;
 }
 
-export interface IParentProviderProps { 
+export interface IParentProviderProps {
   formMode?: FormMode;
   context?: string;
   model: any;
@@ -44,7 +44,7 @@ export function useParent(require: boolean = true) {
 }
 
 const ParentProvider: FC<PropsWithChildren<IParentProviderProps>> = (props) => {
-  const { 
+  const {
     children,
     model,
     formMode,
@@ -79,7 +79,7 @@ const ParentProvider: FC<PropsWithChildren<IParentProviderProps>> = (props) => {
     if (!exists)
       childParentProvider.current = [...childParentProvider.current, input];
     else
-      childParentProvider.current = childParentProvider.current.map((item) =>{
+      childParentProvider.current = childParentProvider.current.map((item) => {
         return item.id === input.id ? input : item;
       });
   };
@@ -96,7 +96,7 @@ const ParentProvider: FC<PropsWithChildren<IParentProviderProps>> = (props) => {
       formMode: formModeLocal,
       context: contextLocal,
       formFlatMarkup: formFlatMarkupLocal,
-      model: {...parent?.model, ...model},
+      model: { ...parent?.model, ...model },
       getChildComponents,
       registerChild,
       unRegisterChild,
@@ -106,6 +106,9 @@ const ParentProvider: FC<PropsWithChildren<IParentProviderProps>> = (props) => {
     parent?.model, childParentProvider.current,
   ]);
 
+
+
+  console.log('ParentProvider :::', { id, value });
   useEffect(() => {
     if (parent) {
       parent.registerChild(value);
@@ -117,8 +120,8 @@ const ParentProvider: FC<PropsWithChildren<IParentProviderProps>> = (props) => {
   }, [value]);
 
   return (
-    <ConditionalWrap 
-      condition={isScope} 
+    <ConditionalWrap
+      condition={isScope}
       wrap={(children: React.ReactNode) => {
         return (
           <ValidateProvider>

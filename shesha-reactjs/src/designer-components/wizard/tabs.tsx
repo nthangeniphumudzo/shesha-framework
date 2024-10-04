@@ -123,7 +123,7 @@ export const Tabs: FC<Omit<IWizardComponentProps, 'size'>> = ({ form, ...model }
                         <div style={{
                             border: '2px solid red'
                         }}>
-                            <ParentProvider model={{ ...visibleSteps[current], id: visibleSteps[current]?.footer?.id }} >
+                            <ParentProvider  model={{ ...visibleSteps[current], id: visibleSteps[current]?.footer?.id }} >
                                 <ComponentsContainer containerId={visibleSteps[current]?.footer?.id} />
                             </ParentProvider>
                         </div>

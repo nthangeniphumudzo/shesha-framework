@@ -11,6 +11,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<ILoadRequestPayload>
     ) => {
+      debugger;
+
       const { payload } = action;
 
       return {
@@ -25,11 +27,13 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<UpToDateForm>
     ) => {
+      debugger;
+
       const { payload } = action;
 
       return {
         ...state,
-        formProps: {...payload},        
+        formProps: { ...payload },
         loaded: true,
         loading: false,
         loadError: null,
@@ -40,6 +44,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IErrorInfo>
     ) => {
+      debugger;
+
       const { payload } = action;
 
       return {
@@ -54,6 +60,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IFormSettings>
     ) => {
+      debugger;
+
       const { payload } = action;
 
       return {
@@ -63,6 +71,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
     },
 
     [FormPersisterActionEnums.SaveRequest]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
+      debugger;
+
       return {
         ...state,
         saving: true,
@@ -71,6 +81,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       };
     },
     [FormPersisterActionEnums.SaveSuccess]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
+      debugger;
+
       return {
         ...state,
         saving: false,
@@ -82,6 +94,8 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IErrorInfo>
     ) => {
+      debugger;
+
       const { payload } = action;
 
       return {

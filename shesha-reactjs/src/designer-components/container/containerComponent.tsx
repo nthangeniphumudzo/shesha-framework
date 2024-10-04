@@ -22,12 +22,12 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
     const { data: formData } = useFormData();
     const { globalState } = useGlobalState();
     const { backendUrl, httpHeaders } = useSheshaApplication();
-    const [ fileUrl, setFileUrl] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
 
     useEffect(() => {
       if (model.backgroundDataSource === 'storedFileId' && model.backgroundStoredFileId) {
         fetch(`${backendUrl}/api/StoredFile/Download?id=${model.backgroundStoredFileId}`,
-          {headers: {...httpHeaders, "Content-Type": "application/octet-stream"}})
+          { headers: { ...httpHeaders, "Content-Type": "application/octet-stream" } })
           .then((response) => {
             return response.blob();
           })
@@ -128,7 +128,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
       .add<IContainerComponentProps>(2, (prev) => migrateVisibility(prev))
       .add<IContainerComponentProps>(3, (prev) => ({ ...migrateFormApi.properties(prev) }))
       .add<IContainerComponentProps>(4, (prev) => (
-        { 
+        {
           ...prev,
           backgroundDataSource: prev.backgroundDataSource ?? prev['dataSource'],
           backgroundBase64: prev.backgroundBase64 ?? prev['base64'],
