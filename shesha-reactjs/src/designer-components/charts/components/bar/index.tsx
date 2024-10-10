@@ -1,14 +1,25 @@
-import { BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Legend, LinearScale, Title, Tooltip } from 'chart.js';
+import {
+  Chart as ChartJS, ChartOptions,
+  BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend
+} from 'chart.js';
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { IChartData, IChartDataProps } from '../../model';
 import { useChartDataStateContext } from '../../../../providers/chartData';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
 interface BarChartProps extends IChartDataProps {
   data: IChartData;
 }
+
+ChartJS.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const BarChart: React.FC<BarChartProps> = ({ data }) => {
   const { axisProperty: xProperty, valueProperty: yProperty, aggregationMethod, showLegend, showTitle, title, legendPosition, showXAxisLabel, showXAxisLabelTitle, showYAxisLabel, showYAxisLabelTitle, stacked } = useChartDataStateContext();
