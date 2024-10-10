@@ -11,7 +11,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<ILoadRequestPayload>
     ) => {
-      debugger;
+
 
       const { payload } = action;
 
@@ -27,7 +27,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<UpToDateForm>
     ) => {
-      debugger;
+
 
       const { payload } = action;
 
@@ -44,7 +44,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IErrorInfo>
     ) => {
-      debugger;
+
 
       const { payload } = action;
 
@@ -60,7 +60,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IFormSettings>
     ) => {
-      debugger;
+
 
       const { payload } = action;
 
@@ -71,7 +71,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
     },
 
     [FormPersisterActionEnums.SaveRequest]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
-      debugger;
+
 
       return {
         ...state,
@@ -81,7 +81,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       };
     },
     [FormPersisterActionEnums.SaveSuccess]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
-      debugger;
+
 
       return {
         ...state,
@@ -94,7 +94,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       state: IFormPersisterStateContext,
       action: ReduxActions.Action<IErrorInfo>
     ) => {
-      debugger;
+
 
       const { payload } = action;
 
