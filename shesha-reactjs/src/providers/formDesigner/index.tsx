@@ -108,7 +108,7 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
       });
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flatMarkup]);
 
   const setReadOnly = useCallback((value: boolean) => {
@@ -287,6 +287,8 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
     setReadOnly
     /* NEW_ACTION_GOES_HERE */
   ]);
+
+  console.log("formMarkup", formFlatMarkup);
 
   return (
     <UndoableFormDesignerStateContext.Provider value={state}>

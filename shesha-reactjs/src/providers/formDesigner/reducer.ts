@@ -41,6 +41,7 @@ const addComponentToFlatStructure = (
   containerId: string,
   index: number
 ): IFlatComponentsStructure => {
+
   // build all components dictionary
   const allComponents = { ...formFlatMarkup.allComponents };
 
@@ -98,6 +99,7 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
       state: IFormDesignerStateContext,
       action: ReduxActions.Action<IFlatComponentsStructure>
     ) => {
+
       const { payload } = action;
 
       return {
@@ -207,6 +209,7 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
       action: ReduxActions.Action<IComponentDeletePayload>
     ) => {
       const { payload } = action;
+
 
       const { formFlatMarkup } = state;
       const { [payload.componentId]: component, ...allComponents } = formFlatMarkup.allComponents;
@@ -319,6 +322,8 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
         ...nestedComponents,
       };
 
+
+
       return {
         ...state,
         formFlatMarkup: {
@@ -334,12 +339,14 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
       action: ReduxActions.Action<IComponentUpdatePayload>
     ) => {
       const { payload } = action;
-
       const { formFlatMarkup } = state;
       const component = formFlatMarkup.allComponents[payload.componentId];
       const newComponent = { ...component, ...payload.settings } as IConfigurableFormComponent;
 
-      const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, (c) => c.type === component.type);
+      const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, (c) => {
+        console.log("update", { ...component })
+        return c.type === component.type
+      });
 
       const newComponents = { ...formFlatMarkup.allComponents, [payload.componentId]: newComponent };
       const componentRelations = { ...formFlatMarkup.componentRelations };
@@ -368,6 +375,8 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
         // update component child ids
         componentRelations[payload.componentId] = newContainers.map((c) => c.id);
       }
+
+
 
       return {
         ...state,
@@ -455,6 +464,7 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
           updatedComponents[id] = newComponent;
         }
       });
+
       const allComponents = { ...formFlatMarkup.allComponents, ...updatedComponents };
       const componentRelations = { ...formFlatMarkup.componentRelations, ...updatedRelations };
 
@@ -486,6 +496,8 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
     ) => {
       const { payload } = action;
 
+
+
       return {
         ...state,
         formFlatMarkup: payload,
@@ -497,6 +509,7 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
       action: ReduxActions.Action<IFormSettings>
     ) => {
       const { payload } = action;
+
 
       return {
         ...state,

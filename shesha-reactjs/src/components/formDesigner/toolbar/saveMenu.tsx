@@ -4,7 +4,7 @@ import {
   DownOutlined,
   ExclamationCircleOutlined,
   SaveOutlined
-  } from '@ant-design/icons';
+} from '@ant-design/icons';
 import { componentsFlatStructureToTree } from '@/providers/form/utils';
 import { ConfigurationItemVersionStatus } from '@/utils/configurationFramework/models';
 import {
@@ -12,7 +12,7 @@ import {
   Dropdown,
   MenuProps,
   Modal
-  } from 'antd';
+} from 'antd';
 import { FormMarkupWithSettings } from '@/providers/form/models';
 import { useFormDesignerState } from '@/providers/formDesigner';
 import { useFormDesignerComponents } from '@/providers/form/hooks';
@@ -41,6 +41,8 @@ export const SaveMenu: FC<ISaveMenuProps> = ({ onSaved }) => {
       components: componentsFlatStructureToTree(toolboxComponents, formFlatMarkup),
       formSettings: formSettings,
     };
+
+    console.log("components ::", formFlatMarkup);
     return saveForm(payload);
   };
 

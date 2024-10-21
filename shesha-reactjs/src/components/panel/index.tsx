@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Collapse, Skeleton } from 'antd';
 import { CollapseProps } from 'antd/lib/collapse';
 import classNames from 'classnames';
@@ -23,6 +23,9 @@ export interface ICollapsiblePanelProps extends CollapseProps {
   isSimpleDesign?: boolean;
   hideCollapseContent?: boolean;
   hideWhenEmpty?: boolean;
+  parentPanel?: boolean;
+  readonly: boolean;
+  headerHeight?: string | number;
 }
 
 /**
@@ -34,11 +37,22 @@ export interface ICollapsiblePanelProps extends CollapseProps {
  * 
  */
 
-const StyledCollapse: any = styled(Collapse)<
+const StyledCollapse: any = styled(Collapse) <
   Omit<ICollapsiblePanelProps, 'collapsible' | 'showArrow' | 'header' | 'extraClassName' | 'extra' | 'radius'>
 >`
-  .ant-collapse-header {
+  .ant-collapse-header{
     visibility: ${({ hideCollapseContent }) => (hideCollapseContent ? 'hidden' : 'visible')};
+    border-top: ${({ parentPanel }) => (parentPanel ? 'none' : ' 3px solid  #25b864')};
+    border-left: ${({ parentPanel }) => (!parentPanel ? 'none' : ' 3px solid  #25b864')};
+    font-size: ${({ parentPanel }) => (parentPanel ? '13px' : '16px')};
+    font-weight: 'bold';
+    
+  }
+  >.ant-collapse-item >.ant-collapse-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: ${({ headerHeight }) => (headerHeight ? headerHeight : '50px')};
   }
 
   .ant-collapse-content {
@@ -47,6 +61,7 @@ const StyledCollapse: any = styled(Collapse)<
     }
   }
 `;
+
 
 export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'radiusRight'>> = ({
   expandIconPosition = 'end',
@@ -67,10 +82,30 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
   isSimpleDesign,
   hideCollapseContent,
   hideWhenEmpty = false,
+  headerHeight,
+  readonly
+
 }) => {
   // Prevent the CollapsiblePanel from collapsing every time you click anywhere on the extra and header
   const onContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
   const { styles } = useStyles();
+  const [parentPanel, setParentPanel] = useState(false);
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    let currentElement = panelRef.current;
+
+    const currentElementParent = !readonly ?
+      currentElement.parentElement.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
+      : currentElement.parentElement.parentElement?.parentElement.parentElement;
+
+    if (currentElementParent.className.includes('ant-collapse')) {
+      setParentPanel(true)
+    } else {
+      setParentPanel(false)
+    }
+
+  }, []);
 
   const shaCollapsiblePanelStyle = isSimpleDesign ? {} : styles.shaCollapsiblePanel;
 
@@ -83,12 +118,16 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
       style={style}
       ghost={ghost}
       bodyColor={bodyColor}
+      parentPanel={parentPanel}
       hideCollapseContent={hideCollapseContent}
+      headerHeight={headerHeight}
     >
       <Panel
         key="1"
         collapsible={collapsible}
+        className='sha-panel'
         showArrow={showArrow}
+        ref={panelRef}
         header={header || ' '}
         extra={
           <span onClick={onContainerClick} className={extraClassName}>

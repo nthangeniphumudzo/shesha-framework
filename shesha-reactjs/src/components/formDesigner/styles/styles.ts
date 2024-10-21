@@ -328,7 +328,11 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
             background-color: white;
             .${shaComponentsContainer} {
                 border-radius: 2px;
-            
+                border: 1px dashed transparent; /* Make the border transparent by default */
+
+                &:hover {
+                  border-color: ${token.colorPrimary}; /* Change the border color on hover */
+                }            
                 .${shaDropHint} {
                     margin: 0;
                     text-align: center;

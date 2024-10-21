@@ -2,18 +2,20 @@ import React, { FC, useContext, useState } from 'react';
 import { CollapsiblePanel, ICollapsiblePanelProps } from '@/components';
 import { useSettingsForm } from './settingsForm';
 import { createNamedContext } from '@/utils/react';
+import { useForm } from '@/providers';
 
-interface ISettingsCollapsiblePanelProps extends ICollapsiblePanelProps { }
+interface ISettingsCollapsiblePanelProps extends Omit<ICollapsiblePanelProps, 'readonly'> { }
 
 export interface ISettingsCollapsiblePanelActionsContext {
     registerField: (name: string) => void;
 }
-  
+
 export const SettingsCollapsiblePanelActionsContext = createNamedContext<ISettingsCollapsiblePanelActionsContext>(undefined, "SettingsCollapsiblePanelActionsContext");
 
 const SettingsCollapsiblePanel: FC<ISettingsCollapsiblePanelProps> = (props) => {
     const [fields, setFields] = useState([]);
     const { propertyFilter } = useSettingsForm<any>();
+    const { formMode } = useForm();
 
     const registerField = (name: string) => {
         if (!Boolean(fields.find(x => (x === name))))
@@ -22,14 +24,14 @@ const SettingsCollapsiblePanel: FC<ISettingsCollapsiblePanelProps> = (props) => 
 
     const settingsCollapsiblePanelActions: ISettingsCollapsiblePanelActionsContext = { registerField };
 
-    const show = !fields || fields.length === 0  || typeof propertyFilter !== 'function'
+    const show = !fields || fields.length === 0 || typeof propertyFilter !== 'function'
         || Boolean(fields.find(x => (propertyFilter(x))));
 
     return (
         <SettingsCollapsiblePanelActionsContext.Provider value={settingsCollapsiblePanelActions}>
             {show
-            ? <CollapsiblePanel ghost={true} expandIconPosition='start' {...props} />
-            : null}
+                ? <CollapsiblePanel ghost={true} expandIconPosition='start' {...props} readonly={formMode !== 'designer'} />
+                : null}
         </SettingsCollapsiblePanelActionsContext.Provider>
     );
 };
@@ -38,7 +40,7 @@ export function useSettingsPanel(required: Boolean) {
     const actionsContext = useContext(SettingsCollapsiblePanelActionsContext);
     if (actionsContext === undefined && required)
         throw new Error('useSettingsPanel must be used within a SettingsCollapsiblePanel');
-  
+
     return actionsContext;
 }
 

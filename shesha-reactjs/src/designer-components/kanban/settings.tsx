@@ -12,7 +12,7 @@ import { SheshaConstants } from '@/utils/metadata/standardProperties';
 import { useAvailableConstantsMetadata } from '@/utils/metadata/useAvailableConstants';
 import { nanoid } from '@/utils/uuid';
 
-interface IKanbanSettingsState extends IKanbanProps {}
+interface IKanbanSettingsState extends IKanbanProps { }
 
 const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
   const { values } = useSettingsForm<IKanbanProps>();
@@ -33,14 +33,14 @@ const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
           <Input readOnly={readOnly} />
         </SettingsFormItem>
       </SettingsCollapsiblePanel>
-        <SettingsFormItem name="modalFormId" label="Render Form" jsSetting>
-          <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
+      <SettingsFormItem name="modalFormId" label="Render Form" jsSetting>
+        <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
+      </SettingsFormItem>
+      <MetadataProvider dataType='entity' modelType={values?.entityType?.id}>
+        <SettingsFormItem name="groupingProperty" label="Grouping property" jsSetting>
+          <PropertyAutocomplete readOnly={props.readOnly} autoFillProps={false} />
         </SettingsFormItem>
-        <MetadataProvider dataType='entity' modelType={values?.entityType?.id}>
-          <SettingsFormItem name="groupingProperty" label="Grouping property" jsSetting>
-            <PropertyAutocomplete readOnly={props.readOnly} autoFillProps={false} />
-          </SettingsFormItem>
-        </MetadataProvider>
+      </MetadataProvider>
 
       <SettingsCollapsiblePanel header="Columns">
         <SettingsFormItem name="referenceList" label="Reference List" style={{ width: '100%' }}>
@@ -80,7 +80,7 @@ const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
         </SettingsFormItem>
 
         <Show when={values.allowEdit}>
-          <MetadataProvider modelType={values.entityType?.name}  id={nanoid()}>
+          <MetadataProvider modelType={values.entityType?.name} id={nanoid()}>
             <SettingsFormItem name="editFormId" label="Edit Form" jsSetting>
               <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
             </SettingsFormItem>

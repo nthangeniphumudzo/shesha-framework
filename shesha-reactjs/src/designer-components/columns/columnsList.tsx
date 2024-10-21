@@ -18,6 +18,7 @@ import { createNamedContext } from '@/utils/react';
 
 export interface IProps {
   readOnly: boolean;
+  fixedColumn?: boolean;
   value?: object;
   onChange?: any;
 }
@@ -129,7 +130,7 @@ const DragHandle = () => {
   return <MenuOutlined style={{ color: '#999' }} {...dragHandleProps} />;
 };
 
-export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly }) => {
+export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly, fixedColumn = false }) => {
   const columns = value as IColumnProps[];
 
   const handleDeleteTab = (key: string) => {
@@ -194,17 +195,16 @@ export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly }) => {
       width: '20%',
       editable: !readOnly,
     },
-    !readOnly
-      ? {
-        title: '',
-        dataIndex: 'operations',
-        render: (_, record) =>
-          columns.length >= 1 ? (
-            <Popconfirm title="Are you sure want to delete this tab?" onConfirm={() => handleDeleteTab(record.id)}>
-              <a>Delete</a>
-            </Popconfirm>
-          ) : null,
-      }
+    (!readOnly && !fixedColumn) ? {
+      title: '',
+      dataIndex: 'operations',
+      render: (_, record) =>
+        columns.length >= 1 ? (
+          <Popconfirm title="Are you sure want to delete this tab?" onConfirm={() => handleDeleteTab(record.id)}>
+            <a>Delete</a>
+          </Popconfirm>
+        ) : null,
+    }
       : null,
   ].filter(c => Boolean(c));
 
@@ -260,17 +260,17 @@ export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly }) => {
 
   return (
     <Fragment>
-      <Button onClick={toggleModal}>{ readOnly ? 'View Columns' : 'Configure Columns' }</Button>
+      <Button onClick={toggleModal}>{readOnly ? 'View Columns' : 'Configure Columns'}</Button>
 
-      <Modal 
-        title={ readOnly ? 'View Columns' : 'Configure Columns' } 
-        open={showDialog} 
+      <Modal
+        title={readOnly ? 'View Columns' : 'Configure Columns'}
+        open={showDialog}
         width="650px"
-        
-        onOk={toggleModal} 
+
+        onOk={toggleModal}
         okButtonProps={{ hidden: readOnly }}
 
-        onCancel={toggleModal} 
+        onCancel={toggleModal}
         cancelText={readOnly ? 'Close' : undefined}
       >
         <Space direction="vertical" style={{ width: '100%' }}>
@@ -299,7 +299,7 @@ export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly }) => {
               )}
             </Droppable>
           </DragDropContext>
-          {!readOnly && (
+          {(!readOnly && !fixedColumn) && (
             <div>
               <Button type="default" onClick={handleAddColumn} icon={<PlusOutlined />}>
                 Add Column

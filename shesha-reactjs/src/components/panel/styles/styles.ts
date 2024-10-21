@@ -33,14 +33,22 @@ export const useStyles = createStyles(({ css, cx, token, prefixCls }) => {
       &:not(.${prefixCls}-collapse-ghost) {
         > .${prefixCls}-collapse-item {
           > .${prefixCls}-collapse-header {
-            border-left: 3px solid ${token.colorPrimary};
             border-top-left-radius: ${token.borderRadiusLG}px;
             border-top-right-radius: ${token.borderRadiusLG}px;
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
             background-color: #f0f0f0;
-            height: 45px;
             margin:'auto 0px';
+            height: auto;
+            width: auto;
+            padding: 0;
+            padding-left:10px;
+            padding-top:5px;
+
+            &.parent-panel{
+              border-top: 3px solid ${token.colorPrimary};
+            }
+
           }
         }
       }

@@ -24,7 +24,6 @@ const ColumnsComponent: IToolboxComponent<IColumnsComponentProps> = {
     const { columns, gutterX = 0, gutterY = 0 } = model as IColumnsComponentProps;
 
     if (model.hidden) return null;
-
     return (
       <Row gutter={[gutterX, gutterY]} style={getLayoutStyle(model, { data, globalState })}>
         <ParentProvider model={model}>

@@ -203,7 +203,7 @@ export const wrapConstantsData = (args: WrapConstantsDataArgs): ProxyPropertiesA
     http: () => axiosHttp(backendUrl),
     message: () => message,
     data: () => {
-      const data = {...shaFormInstance?.formData};
+      const data = { ...shaFormInstance?.formData };
       return removeGhostKeys(data);
     },
     form: () => {
@@ -520,7 +520,6 @@ export const componentsFlatStructureToTree = (
     const componentIds = flat.componentRelations[ownerId];
 
     if (!componentIds) return;
-
     const ownerComponent = flat.allComponents[ownerId];
     const ownerDefinition = ownerComponent && ownerComponent.type
       ? toolboxComponents[ownerComponent.type]
@@ -1616,7 +1615,7 @@ export interface EvaluationContext {
 const evaluateRecursive = (data: any, evaluationContext: EvaluationContext): any => {
   if (!data)
     return data;
-  
+
   const { path, contextData, evaluationFilter } = evaluationContext;
   if (evaluationFilter && !evaluationFilter(evaluationContext, data))
     return data;
