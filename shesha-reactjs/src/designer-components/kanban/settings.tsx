@@ -36,14 +36,16 @@ const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
       <SettingsFormItem name="modalFormId" label="Render Form" jsSetting>
         <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
       </SettingsFormItem>
-      <MetadataProvider dataType='entity' modelType={values?.entityType?.id}>
+      <MetadataProvider dataType="entity" modelType={values?.entityType?.id}>
         <SettingsFormItem name="groupingProperty" label="Grouping property" jsSetting>
           <PropertyAutocomplete readOnly={props.readOnly} autoFillProps={false} />
         </SettingsFormItem>
       </MetadataProvider>
-
+      <SettingsFormItem name="maxResultCount" label="Max Result Count" jsSetting>
+          <Input type="number" disabled={readOnly} />
+        </SettingsFormItem>
       <SettingsCollapsiblePanel header="Columns">
-        <SettingsFormItem name="referenceList" label="Reference List" style={{ width: '100%' }}>
+        <SettingsFormItem name="referenceList" label="Reference List" style={{ width: '100%' }} tooltip='Make sure to come reselect the reference list if any changes are applied to any of the reference list items'>
           <Autocomplete
             dataSourceType="entitiesList"
             typeShortAlias="Shesha.Framework.ReferenceList"
@@ -86,6 +88,9 @@ const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
             </SettingsFormItem>
           </MetadataProvider>
         </Show>
+        <SettingsFormItem name="allowDelete" label="Allow Delete" valuePropName="checked" jsSetting>
+          <Checkbox disabled={values.readOnly} />
+        </SettingsFormItem>
       </Show>
       <SettingsFormItem name="showIcons" label="Show Icons" valuePropName="checked" jsSetting>
         <Checkbox disabled={values.readOnly} />
@@ -121,6 +126,15 @@ const KanbanSettings: FC<ISettingsFormFactoryArgs<IKanbanProps>> = (props) => {
           <Input type="number" disabled={readOnly} />
         </SettingsFormItem>
         <SettingsFormItem name="maxHeight" label="Max Height" jsSetting>
+          <Input type="number" disabled={readOnly} />
+        </SettingsFormItem>
+        <SettingsFormItem name="width" label="Width" jsSetting>
+          <Input type="number" disabled={readOnly} />
+        </SettingsFormItem>
+        <SettingsFormItem name="minWidth" label="Min Width" jsSetting>
+          <Input type="number" disabled={readOnly} />
+        </SettingsFormItem>
+        <SettingsFormItem name="maxWidth" label="Max Width" jsSetting>
           <Input type="number" disabled={readOnly} />
         </SettingsFormItem>
         <SettingsFormItem name="columnBackgroundColor" label="Background Color" jsSetting>

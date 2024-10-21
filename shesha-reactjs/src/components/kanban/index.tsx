@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Flex, Form, message, Modal } from 'antd';
 import { IKanbanProps } from './model';
 import { useKanbanActions } from './utils';
@@ -6,19 +6,16 @@ import KanbanPlaceholder from './components/kanbanPlaceholder';
 import {
   ConfigurableForm,
   DataTypes,
-  useAvailableConstantsData,
-  useConfigurableActionDispatcher,
   useFormState,
   useGet,
   useMetadataDispatcher,
 } from '@/index';
 import KanbanColumn from './components/renderColumn';
-import { MoveEvent } from 'react-sortablejs';
 import { useRefListItemGroupConfigurator } from '@/providers/refList/provider';
 import { addPx } from '../keyInformationBar/utils';
 
 const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
-  const { gap, groupingProperty, entityType, createFormId, items, componentName, editFormId } = props;
+  const { gap, groupingProperty, entityType, createFormId, items, componentName, editFormId, maxResultCount } = props;
 
   const [columns, setColumns] = useState([]);
   const [urls, setUrls] = useState({ updateUrl: '', deleteUrl: '', postUrl: '' });
@@ -33,8 +30,6 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
   const [selectedColumn, setSelectedColumn] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [settings, setSettings] = useState({});
-  const allData = useAvailableConstantsData();
-  const { executeAction } = useConfigurableActionDispatcher();
   const { storeSettings } = useRefListItemGroupConfigurator();
   const { getMetadata } = useMetadataDispatcher();
 
@@ -43,7 +38,7 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
       getMetadata({ modelType: entityType.id, dataType: DataTypes.entityReference }).then((resp: any) => {
         const endpoints = resp?.apiEndpoints;
         setUrls({ updateUrl: endpoints.update.url, deleteUrl: endpoints.delete.url, postUrl: endpoints.create.url });
-        refetch({ path: `${resp?.apiEndpoints.list.url}?maxResultCount=1000` })
+        refetch({ path: `${resp?.apiEndpoints.list.url}?maxResultCount=${maxResultCount || 100}` })
           .then((resp) => {
             setTasks(resp.result.items.filter((x: any) => x[`${groupingProperty}`] !== null));
           })
@@ -81,52 +76,11 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
 
   useEffect(() => {
     if (selectedItem) {
-      form.setFieldsValue(selectedItem);
+      editForm.setFieldsValue(selectedItem);
     } else {
-      form.resetFields();
+      editForm.resetFields();
     }
-  }, [selectedItem, form]);
-
-  const onEnd = useCallback(
-    (evt: any, column: any): Promise<boolean> => {
-      return new Promise((resolve) => {
-        const { to, dragged } = evt;
-        const draggedTask = dragged?.dataset?.id;
-        const targetColumn = to?.dataset;
-
-        if (!column || !targetColumn?.actionConfiguration) {
-          resolve(true); // Allow the drag and drop to proceed without action
-          return;
-        }
-
-        // Ensure the task is not dropped back into the same column based on the value
-        if (column.itemValue === dragged?.dataset.value) {
-          resolve(true); // Skip further actions
-          return;
-        }
-
-        const evaluationContext = {
-          ...allData,
-          selectedRow: column,
-          draggedTask,
-        };
-
-        // Perform the action
-        executeAction({
-          actionConfiguration: column.actionConfiguration,
-          argumentsEvaluationContext: evaluationContext,
-          success: () => {
-            resolve(true); // Action succeeded, allow update
-          },
-          fail: (error) => {
-            console.error('Action failed:', error);
-            resolve(false); // Action failed, prevent update
-          },
-        });
-      });
-    },
-    [allData, executeAction]
-  );
+  }, [selectedItem, editForm]);
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -136,50 +90,6 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
     setSelectedColumn(null);
   };
 
-  const handleUpdate = useCallback(
-    async (newTasks: any[], column: any) => {
-      // Check if the tasks have changed (e.g., their order or column)
-      const hasChanged = newTasks.some((task, index) => task.id !== tasks[index]?.id);
-
-      if (!hasChanged) {
-        return; // Exit early if no changes are found
-      }
-      // Call onEnd to check whether action execution is necessary
-      const canUpdate = await onEnd(
-        {
-          to: { dataset: { columnId: column.id, actionConfiguration: column.actionConfiguration } },
-          dragged: { dataset: { id: newTasks[0]?.id, value: newTasks[0]?.appointmentType } },
-        },
-        column
-      );
-      // If onEnd returns false, don't update tasks
-      if (!canUpdate) {
-        return; // Exit the function without updating
-      }
-
-      // If we get here, we can safely update tasks
-      setTasks((prevTasks) => {
-        const updatedTasks = prevTasks.map((task) => {
-          const movedTask = newTasks.find((newTask) => newTask.id === task.id);
-          if (movedTask && task[groupingProperty] !== column.itemValue) {
-            const updatedTask = { ...task, [groupingProperty]: column.itemValue };
-            const payload = { id: task.id, [groupingProperty]: column.itemValue };
-            updateKanban(payload, urls.updateUrl); // Send update to the server
-            return updatedTask;
-          }
-          return task;
-        });
-
-        // Sort tasks based on their new order in the column
-        return updatedTasks.sort((a, b) => {
-          const aIndex = newTasks.findIndex((t) => t.id === a.id);
-          const bIndex = newTasks.findIndex((t) => t.id === b.id);
-          return aIndex - bIndex;
-        });
-      });
-    },
-    [tasks, groupingProperty, onEnd, updateKanban, urls.updateUrl]
-  );
 
   const handleEditClick = (item: any) => {
     setSelectedItem(item);
@@ -238,7 +148,7 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
   const memoizedFilteredTasks = useMemo(() => {
     return columns.map((column) => ({
       column,
-      tasks: tasks.filter((task) => task[groupingProperty] === column.itemValue),
+      tasks: tasks.filter((task) => parseFloat(task[groupingProperty]) === column.itemValue),
       isCollapsed: settings[column.itemValue] || false, // Default to false if not set
     }));
   }, [columns, tasks, groupingProperty, settings]);
@@ -248,22 +158,22 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
       {items.length === 0 ? (
         <KanbanPlaceholder />
       ) : (
-        <Flex
-          style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex', gap: addPx(gap) }}
-        >
+        <Flex style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex', gap: addPx(gap) }}>
           {memoizedFilteredTasks.map(({ column, tasks: columnTasks }) => (
             <KanbanColumn
               props={props}
+              setTasks={setTasks}
               key={column.itemValue}
+              urls={urls}
+              tasks={tasks}
               collapse={settings[column.itemValue] ?? false}
               column={column}
+              columns={columns}
               columnTasks={columnTasks}
-              handleUpdate={handleUpdate}
               handleEditClick={handleEditClick}
               handleDelete={handleDelete}
               handleCreateClick={handleCreateClick}
               selectedItem={selectedItem}
-              onEnd={(evt: MoveEvent) => onEnd(evt, column)}
             />
           ))}
         </Flex>
@@ -280,19 +190,14 @@ const KanbanReactComponent: React.FC<IKanbanProps> = (props) => {
       >
         {selectedItem ? (
           <ConfigurableForm
-            key={selectedItem ? selectedItem : 'new-item'}
+            key={selectedItem}
             initialValues={selectedItem || {}}
             form={editForm}
             formId={editFormId}
             mode="edit"
           />
         ) : (
-          <ConfigurableForm
-            key={selectedItem ? selectedItem : 'new-item'}
-            form={form}
-            formId={createFormId}
-            mode="edit"
-          />
+          <ConfigurableForm key={'new-item'} form={form} formId={createFormId} mode="edit" />
         )}
       </Modal>
     </>
