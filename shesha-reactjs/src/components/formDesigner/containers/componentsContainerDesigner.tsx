@@ -11,7 +11,6 @@ import { useFormDesignerActions, useFormDesignerState } from '@/providers/formDe
 import { useStyles } from '../styles/styles';
 import { useParent } from '@/providers/parentProvider';
 import _ from 'lodash';
-import { BlockOutlined } from '@ant-design/icons';
 
 export const ComponentsContainerDesigner: FC<PropsWithChildren<IComponentsContainerProps>> = (props) => {
     const {
@@ -122,7 +121,7 @@ export const ComponentsContainerDesigner: FC<PropsWithChildren<IComponentsContai
         >
             <>
                 {childIds.length === 0 && <div className={styles.shaDropHint} style={{
-                }}><BlockOutlined /></div>}
+                }}>Drag and Drop form component</div>}
                 <ReactSortable
                     disabled={readOnly}
                     onStart={onDragStart}
