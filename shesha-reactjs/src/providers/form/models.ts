@@ -190,6 +190,8 @@ export interface IConfigurableFormComponent
   noDataSecondaryText?: string;
 
   permissions?: string[];
+  /** Allow additional properties to the setting panel */
+  [key: string]: any;
 
 }
 

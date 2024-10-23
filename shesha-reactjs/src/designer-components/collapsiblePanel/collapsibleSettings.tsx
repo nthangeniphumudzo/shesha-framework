@@ -23,7 +23,7 @@ const ColumnsSettings: FC<ISettingsFormFactoryArgs<IColumnsComponentProps>> = (p
         <SettingsFormItem name="componentName" label="Component Name" required>
           <Input readOnly={readOnly} />
         </SettingsFormItem>
-        <SettingsFormItem name="label" label="Label">
+        <SettingsFormItem name="label" label="Label" hidden>
           <Input readOnly={readOnly} />
         </SettingsFormItem>
         <SettingsFormItem name="customHeader" valuePropName="checked" jsSetting label="Custom Header">

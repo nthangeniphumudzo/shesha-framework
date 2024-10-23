@@ -18,7 +18,6 @@ import { executeFunction } from '@/utils';
 import ParentProvider from '@/providers/parentProvider/index';
 import { migrateFormApi } from '../_common-migrations/migrateFormApi1';
 import { removeComponents } from '../_common-migrations/removeComponents';
-import { IColumnsComponentProps } from '../columns/interfaces';
 import { Col, Row } from 'antd';
 import { toSizeCssProp } from '@/utils/form';
 import { useFormDesignerActions, useFormDesignerState } from '@/providers/formDesigner';
@@ -33,8 +32,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
   Factory: ({ model }) => {
     const { formMode } = useForm();
     const { data } = useFormData();
-    const [added, setAdded] = React.useState(false);
-    const { addComponent } = useFormDesignerActions()
+    const { addComponent, updateComponent } = useFormDesignerActions()
     const { formFlatMarkup } = useFormDesignerState();
     const { globalState } = useGlobalState();
     const {
@@ -48,25 +46,75 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       isSimpleDesign,
       hideCollapseContent,
       hideWhenEmpty,
-      customHeader = false,
       columns,
       gutterX,
       gutterY
     } = model;
 
+    const evaluatedLabel = typeof label === 'string' ? evaluateString(label, data) : label;
+
 
     useEffect(() => {
-      const isCollapsiblePanel = model?.type === 'collapsiblePanel'
-        && model['columns']
-        && !formFlatMarkup?.allComponents[model?.columns[0]?.components[0]?.id];
-      if (isCollapsiblePanel) {
-        addComponent({
-          ...model?.columns[0],
-          componentType: model?.columns[0].components[0].type,
-          containerId: model?.columns[0].id
-        })
+      if (!model?.columns?.length) return;
+
+      const firstColumn = model.columns[0];
+      const hasComponents = firstColumn?.components?.length > 0;
+
+      let hasHeader = false;
+
+      if (hasComponents) {
+        for (const key in formFlatMarkup?.allComponents) {
+          if (formFlatMarkup?.allComponents[key]?.parentId === model?.columns[0]?.id
+          ) {
+            hasHeader = true;
+            break;
+          }
+        };
+      } else {
+        hasHeader = true;
       }
-    }, [])
+      if (!hasHeader) {
+        addComponent({
+          componentType: 'text',
+          containerId: model?.columns[0].id,
+          index: 0,
+        });
+      };
+    }, []);
+
+    useEffect(() => {
+      if (!model?.columns?.length) return;
+
+      const firstColumn = model.columns[0];
+      const firstComponent = firstColumn.components?.[0];
+
+      if (firstComponent?.type !== 'text') return;
+
+      for (const key in formFlatMarkup?.allComponents) {
+
+        const component = formFlatMarkup.allComponents[key];
+        const parentComponent = formFlatMarkup.allComponents[component?.parentId];
+
+
+        if (
+          component?.parentId &&
+          component?.id &&
+          !component?.content
+          && (component?.parentId !== firstColumn.id || parentComponent)
+        ) {
+
+          updateComponent({
+            ...component,
+            componentId: component.id,
+            settings: {
+              ...component,
+              content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
+            },
+          });
+          break;
+        }
+      }
+    }, [Object.keys(formFlatMarkup?.allComponents).length]);
 
 
 
@@ -75,9 +123,6 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
     const styling = JSON.parse(model.stylingBox || '{}');
 
     const headerHeight = toSizeCssProp(model.headerHeight)
-
-    const evaluatedLabel = typeof label === 'string' ? evaluateString(label, data) : label;
-
 
     const getPanelStyle = {
       backgroundColor: headerColor,
@@ -91,21 +136,6 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         <Row gutter={[gutterX, gutterY]} style={getLayoutStyle(model, { data, globalState })}>
           {columns &&
             columns.map((col, index) => {
-              if (index == 0 && !customHeader) {
-                col.components[0].content = evaluatedLabel;
-                if (col.components.length && formFlatMarkup?.allComponents[col.components[0].id] == undefined && !added) {
-                  setAdded(true);
-                  // addComponent({
-                  //   ...col.components[0],
-                  //   componentType: col?.components[0].type,
-                  //   containerId: col.id
-                  // })
-                }
-              }
-              // if (index == 1 && model?.header?.components.length > 0) {
-              //   const modHeaders = model?.header?.components.map(col => ({ ...col, parentId: col?.id }));
-              //   col.components = modHeaders;
-              // }
               return (
                 <Col
                   key={index}
@@ -118,14 +148,14 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
                   <ComponentsContainer
                     containerId={col.id}
 
-                    dynamicComponents={(model?.isDynamic || (!customHeader)) ? col?.components : []}
+                    dynamicComponents={(model?.isDynamic) ? col?.components : []}
                   />
                 </Col>
               )
             }
             )}
         </Row>
-      ) : null;
+      ) : evaluatedLabel;
 
     const header = <div style={{
       position: 'relative',
@@ -134,8 +164,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
     </div>
 
 
-    console.log("components :::::", formFlatMarkup);
-
+    console.log("model", model, formMode, columns?.length)
     return (
       <ParentProvider model={model}>
         <CollapsiblePanel
@@ -165,23 +194,9 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
     );
   },
   initModel: (model) => {
-    const tabsModel: IColumnsComponentProps = {
-      ...model,
-      propertyName: 'custom Name',
-      columns: [
-        {
-          id: nanoid(), flex: 12, offset: 0, push: 0, pull: 0, components: []
-        },
-        { id: nanoid(), flex: 12, offset: 0, push: 0, pull: 0, components: [] },
-      ],
-      gutterX: 12,
-      gutterY: 12,
-      stylingBox: "{\"marginBottom\":\"5\"}"
-    };
 
     return ({
       ...model,
-      ...tabsModel,
       stylingBox: "{\"marginBottom\":\"5\"}"
     })
   },
@@ -233,55 +248,34 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       .add<ICollapsiblePanelComponentProps>(6, (prev) => removeComponents(prev))
       .add<ICollapsiblePanelComponentProps>(7, (prev) => {
         const evaluatedLabel = typeof prev?.label === 'string' ? evaluateString(prev?.label, {}) : prev?.label;
-        if (!prev?.customHeader) {
-          const defaultColumnId = prev?.columns[0].id;
+        const defaultColumnId = nanoid();
 
-
-          return {
-            ...prev,
-            columns: [
-              {
-                id: defaultColumnId, flex: 12, offset: 0, push: 0, pull: 0, components: [
-                  {
-                    "code": false,
-                    "copyable": false,
-                    "delete": false,
-                    "ellipsis": false,
-                    "mark": false,
-                    "italic": false,
-                    "underline": false,
-                    "level": 1,
-                    "textType": "span",
-                    "id": "703zTXPXkSn6CY1Ou5V1_QaAm5tfDL",
-                    "type": "text",
-                    "propertyName": "text1",
-                    "componentName": "text1",
-                    "label": "Text1",
-                    "labelAlign": "right",
-                    "parentId": `${defaultColumnId}`,
-                    "hidden": false,
-                    "isDynamic": false,
-                    "version": 2,
-                    "contentDisplay": "content",
-                    "textAlign": "start",
-                    "content": `${evaluatedLabel}`,
-                    "dataType": "string",
-                    "padding": "none"
-
-                  }
-                ]
-              },
-              { id: prev?.columns[1].id, flex: 12, offset: 0, push: 0, pull: 0, components: [] },
-            ],
-            gutterX: 12,
-            gutterY: 12,
-          }
-
+        return {
+          ...prev,
+          propertyName: 'custom Name',
+          columns: [
+            {
+              id: defaultColumnId, flex: 12, offset: 0, push: 0, pull: 0, components: [
+                {
+                  type: 'text',
+                  id: nanoid(),
+                  parentId: defaultColumnId,
+                  settings: {
+                    content: evaluatedLabel,
+                  },
+                }
+              ]
+            },
+            { id: nanoid(), flex: 12, offset: 0, push: 0, pull: 0, components: [] },
+          ],
+          gutterX: 12,
+          gutterY: 12,
         }
 
+      }
+      )
 
 
-      })
   ,
   customContainerNames: ['header', 'content', 'columns'],
 };
