@@ -7,11 +7,10 @@ import StyleBox from '../styleBox/components/box';
 import { Checkbox, Input, InputNumber, Select } from 'antd';
 import { ISettingsFormFactoryArgs } from '@/interfaces';
 import SettingsCollapsiblePanel from '../_settings/settingsCollapsiblePanel';
-import PermissionAutocomplete from '@/components/permissionAutocomplete';
 import ColumnsList from '../columns/columnsList';
 import { EXPOSED_VARIABLES } from '../columns/exposedVariables';
 import { IColumnsComponentProps } from '../columns/interfaces';
-import { ColorPicker } from '@/components';
+import { ColorPicker, PermissionAutocomplete } from '@/components';
 
 const ColumnsSettings: FC<ISettingsFormFactoryArgs<IColumnsComponentProps>> = (props) => {
   const { readOnly } = props;
@@ -57,6 +56,9 @@ const ColumnsSettings: FC<ISettingsFormFactoryArgs<IColumnsComponentProps>> = (p
         </SettingsFormItem>
         <SettingsFormItem name="isSimpleDesign" label="Simple Design">
           <Checkbox disabled={readOnly} />
+        </SettingsFormItem>
+        <SettingsFormItem name="borderRadius" label="Border Radius">
+          <InputNumber step={1} readOnly={readOnly} />
         </SettingsFormItem>
         <SettingsFormItem name="headerColor" label="Header Background Color">
           <ColorPicker />

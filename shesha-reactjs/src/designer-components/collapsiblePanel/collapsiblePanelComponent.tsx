@@ -20,7 +20,7 @@ import { migrateFormApi } from '../_common-migrations/migrateFormApi1';
 import { removeComponents } from '../_common-migrations/removeComponents';
 import { Col, Row } from 'antd';
 import { toSizeCssProp } from '@/utils/form';
-import { useFormDesignerActions, useFormDesignerState } from '@/providers/formDesigner';
+import { useFormDesignerState } from '@/providers/formDesigner';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -32,7 +32,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
   Factory: ({ model }) => {
     const { formMode } = useForm();
     const { data } = useFormData();
-    const { addComponent, updateComponent } = useFormDesignerActions()
+    // const { addComponent, updateComponent } = useFormDesignerActions()
     const { formFlatMarkup } = useFormDesignerState();
     const { globalState } = useGlobalState();
     const {
@@ -74,11 +74,11 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         hasHeader = true;
       }
       if (!hasHeader) {
-        addComponent({
-          componentType: 'text',
-          containerId: model?.columns[0].id,
-          index: 0,
-        });
+        // addComponent({
+        //   componentType: 'text',
+        //   containerId: model?.columns[0].id,
+        //   index: 0,
+        // });
       };
     }, []);
 
@@ -103,14 +103,14 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
           && (component?.parentId !== firstColumn.id || parentComponent)
         ) {
 
-          updateComponent({
-            ...component,
-            componentId: component.id,
-            settings: {
-              ...component,
-              content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
-            },
-          });
+          // updateComponent({
+          //   ...component,
+          //   componentId: component.id,
+          //   settings: {
+          //     ...component,
+          //     content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
+          //   },
+          // });
           break;
         }
       }
@@ -129,6 +129,8 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       ...pickStyleFromModel(styling),
       ...(executeFunction(model?.style, { data, globalState }) || {}),
     };
+
+
 
 
     const extra =
@@ -164,7 +166,8 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
     </div>
 
 
-    console.log("model", model, formMode, columns?.length)
+    console.log("Header ::", model?.header)
+
     return (
       <ParentProvider model={model}>
         <CollapsiblePanel
@@ -176,7 +179,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
           showArrow={collapsible !== 'disabled' && expandIconPosition !== 'hide'}
           ghost={ghost}
           dynamicBorderRadius={model?.borderRadius}
-          style={{...getPanelStyle}}
+          style={{ ...getPanelStyle }}
           className={model.className}
           bodyColor={bodyColor}
           readonly={formMode !== 'designer'}
@@ -214,7 +217,29 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         };
       })
       .add<ICollapsiblePanelComponentProps>(1, (prev, context) => {
-        const header = { id: nanoid(), components: [] };
+        const header = {
+          id: nanoid(), components: [
+            prev.columns.map((col, index) => {
+              return (
+                <Col
+                  key={index}
+                  md={col.flex}
+                  offset={col.offset}
+                  pull={col.pull}
+                  push={col.push}
+                  className="sha-designer-column"
+                >
+                  <ComponentsContainer
+                    containerId={col.id}
+
+                    dynamicComponents={(prev?.isDynamic) ? col?.components : []}
+                  />
+                </Col>
+              )
+            }
+            )
+          ]
+        };
         const content = { id: nanoid(), components: [] };
 
         delete context.flatStructure.componentRelations[context.componentId];
@@ -225,6 +250,8 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
             context.flatStructure.componentRelations[content.id].push(x.id);
             return { ...x, parentId: content.id };
           }) ?? [];
+
+        console.log("header column ::", header)
 
         return {
           ...prev,
