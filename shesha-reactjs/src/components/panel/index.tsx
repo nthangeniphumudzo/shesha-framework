@@ -26,6 +26,7 @@ export interface ICollapsiblePanelProps extends CollapseProps {
   parentPanel?: boolean;
   readonly: boolean;
   headerHeight?: string | number;
+  dynamicBorderRadius?: number;
 }
 
 /**
@@ -83,12 +84,13 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
   hideCollapseContent,
   hideWhenEmpty = false,
   headerHeight,
-  readonly
+  readonly,
+  dynamicBorderRadius
 
 }) => {
   // Prevent the CollapsiblePanel from collapsing every time you click anywhere on the extra and header
   const onContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
-  const { styles } = useStyles();
+  const { styles } = useStyles({borderRadius: dynamicBorderRadius});
   const [parentPanel, setParentPanel] = useState(false);
   const panelRef = useRef(null);
 
@@ -115,7 +117,7 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
       onChange={onChange}
       expandIconPosition={expandIconPosition}
       className={classNames(shaCollapsiblePanelStyle, className, { [styles.noContentPadding]: noContentPadding, [styles.hideWhenEmpty]: hideWhenEmpty })}
-      style={style}
+      style={{ ...style, borderTopLeftRadius: dynamicBorderRadius, borderTopRightRadius: dynamicBorderRadius }}
       ghost={ghost}
       bodyColor={bodyColor}
       parentPanel={parentPanel}

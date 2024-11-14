@@ -1498,7 +1498,7 @@ export const getLayoutStyle = (model: IConfigurableFormComponent, args: { [key: 
 
   try {
     return { ...style, ...(executeFunction(model?.style, args) || {}) };
-  } catch (_e) {
+  } catch {
     return style;
   }
 };

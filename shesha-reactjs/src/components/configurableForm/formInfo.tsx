@@ -8,6 +8,7 @@ import StatusTag from '@/components/statusTag';
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { QuickEditDialog } from '../formDesigner/quickEdit/quickEditDialog';
 import { useStyles } from './styles/styles';
+import classNames from 'classnames';
 
 export interface FormInfoProps {
   /**
@@ -25,14 +26,13 @@ export interface FormInfoProps {
   children?: React.ReactNode;
 }
 
-export const FormInfo: FC<FormInfoProps> = ({ formProps, onMarkupUpdated, visible, children }) => {
+export const FormInfo: FC<FormInfoProps> = ({ formProps, onMarkupUpdated, children }) => {
   const { id, versionNo, versionStatus, name, module } = formProps;
-  const { toggleShowInfoBlock, formInfoBlockVisible } = useAppConfigurator();
+  const { toggleShowInfoBlock, formInfoBlockVisible, softInfoBlock } = useAppConfigurator();
   const { styles } = useStyles();
 
   const [open, setOpen] = useState(false);
   const [panelShowing, setPanelShowing] = useState<boolean>(formInfoBlockVisible);
-  const [allowHidePanel, setAllowHidePanel] = useState<boolean>(false);
   const displayEditMode = formInfoBlockVisible && formProps?.id;
 
   const onModalOpen = () => setOpen(true);
@@ -43,103 +43,84 @@ export const FormInfo: FC<FormInfoProps> = ({ formProps, onMarkupUpdated, visibl
     setOpen(false);
   };
 
-  const toggleFormPanel = () => {
-    if (allowHidePanel === true) {
-      setPanelShowing(visible);
-    }
-  };
-
-  const toggleFormBlock = () => {
-    if (formInfoBlockVisible === true) {
-      setPanelShowing(true);
-      setAllowHidePanel(true);
-    }
-  };
-
   useEffect(() => {
-    toggleFormBlock();
-  }, [formInfoBlockVisible]);
+    setPanelShowing(softInfoBlock);
+  }, [softInfoBlock]);
 
-  useEffect(() => {
-    toggleFormPanel();
-  }, [visible]);
-
-  useEffect(()=>{
-    if(Boolean(displayEditMode)) setTimeout(()=>{
-      setPanelShowing(false);
-    }, 3000);
-  },[formInfoBlockVisible]);
+  if (!formProps?.id) {
+    return <>{children}</>;
+  }
 
   return (
     <div
       onMouseEnter={(event) => {
         event.stopPropagation();
-        if(Boolean(displayEditMode)) setPanelShowing(true);
+        if (Boolean(displayEditMode)) setPanelShowing(true);
       }}
       onMouseLeave={(event) => {
         event.stopPropagation();
-        if(Boolean(displayEditMode)) setPanelShowing(false);
+        if (Boolean(displayEditMode)) setPanelShowing(false);
       }}
-      style={{
-        border: Boolean(displayEditMode) ? '1px #10239e solid' : 'none',
-        position: 'relative',
-        transition: '.1s',
-        overflow: 'hidden',
-        padding: '3px',
-      }}
+      className={classNames(styles.shaFormContainer, { [styles.shaEditMode]: displayEditMode })}
     >
-      <div
-        className={`${styles.shaFormInfoCard}`}
-        style={{
-          top: panelShowing && formProps.id ? '-2px' : '-28px',
-          opacity: panelShowing && formProps.id ? '1' : '0',
-        }}
-      >
+
+      <div className={`${styles.shaFormInfoCardParent}`} style={{
+        height: Boolean(displayEditMode) ? '40px' : '0px',
+      }}>
         <div
+          className={`${styles.shaFormInfoCard}`}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            transform: 'skew(30deg)',
+            top: panelShowing && formProps.id ? '-1px' : '-28px',
+            opacity: panelShowing && formProps.id ? '1' : '0',
           }}
         >
-          {id && (
-            <Button type="link" onClick={onModalOpen} style={{ padding: 0 }}>
-              <EditOutlined
-                style={{ color: '#FFFFFF' }}
-                title="Click to open this form in the designer"
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              transform: 'skew(30deg)',
+            }}
+          >
+            {id && (
+              <Button type="link" onClick={onModalOpen} style={{ padding: 0 }}>
+                <EditOutlined
+                  style={{ color: '#FFFFFF' }}
+                  title="Click to open this form in the designer"
+                />
+              </Button>
+            )}
+
+            <p
+              onClick={() => onModalOpen()}
+              title={`${getFormFullName(module, name)} v${versionNo}`}
+              className={styles.shaFormInfoCardTitle}>
+              {getFormFullName(module, name)} v{versionNo}
+            </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', paddingRight: 5 }}>
+              <StatusTag
+                value={versionStatus}
+                mappings={CONFIGURATION_ITEM_STATUS_MAPPING}
+                color={null}
+                style={{ display: 'flex', marginRight: '5px', fontSize: '10px', height: '15px', justifyContent: 'center', alignItems: 'center' }}
               />
-            </Button>
-          )}
+              <CloseOutlined
+                onClick={() => toggleShowInfoBlock(false)}
+                title="Click to hide form info"
+                style={{ color: '#FFFFFF' }}
+              />
+            </div>
 
-          <p
-            title={`${getFormFullName(module, name)} v${versionNo}`}
-            className={styles.shaFormInfoCardTitle}>
-            {getFormFullName(module, name)} v{versionNo}
-          </p>
-
-          <div style={{ display: 'flex', alignItems: 'center', paddingRight: 5 }}>
-            <StatusTag
-              value={versionStatus}
-              mappings={CONFIGURATION_ITEM_STATUS_MAPPING}
-              color={null}
-              style={{ marginRight: '5px' }}
-            />
-            <CloseOutlined
-              onClick={() => toggleShowInfoBlock(false)}
-              title="Click to hide form info"
-              style={{ color: '#FFFFFF' }}
-            />
+            {id && open && (
+              <QuickEditDialog
+                formId={id}
+                open={open}
+                onCancel={() => setOpen(false)}
+                onUpdated={onUpdated}
+              />
+            )}
           </div>
-
-          {id && open && (
-            <QuickEditDialog
-              formId={id}
-              open={open}
-              onCancel={() => setOpen(false)}
-              onUpdated={onUpdated}
-            />
-          )}
         </div>
       </div>
       <div>
