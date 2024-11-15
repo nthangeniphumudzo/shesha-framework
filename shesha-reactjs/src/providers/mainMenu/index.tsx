@@ -16,10 +16,10 @@ export interface MainMenuProviderProps {
   mainMenuConfigKey?: string;
 }
 
-const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({children}) => {
-  const [state, dispatch] = useReducer(uiReducer, {...MAIN_MENU_CONTEXT_INITIAL_STATE});
+const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({ children }) => {
+  const [state, dispatch] = useReducer(uiReducer, { ...MAIN_MENU_CONTEXT_INITIAL_STATE });
 
-  const { loadingState, value: fetchedMainMenu } = useSettingValue({module: 'Shesha', name: 'Shesha.MainMenuSettings'});
+  const { loadingState, value: fetchedMainMenu } = useSettingValue({ module: 'Shesha', name: 'Shesha.MainMenuSettings' });
 
   const { applicationKey, anyOfPermissionsGranted, backendUrl, httpHeaders } = useSheshaApplication();
   const allData = useAvailableConstantsData();
@@ -36,7 +36,7 @@ const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({childre
         if (anyOfPermissionsGranted(actualItem?.requiredPermissions))
           return actualItem;
         else
-          return {...actualItem, hidden: true};
+          return { ...actualItem, hidden: true };
       return actualItem;
     });
 
@@ -52,7 +52,7 @@ const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({childre
       && item.actionConfiguration?.actionArguments?.formId?.module
     ) {
       // form navigation, check form permissions
-      const form = formsPermission.find(x => 
+      const form = formsPermission.find(x =>
         x.module === item.actionConfiguration?.actionArguments?.formId?.module
         && x.name === item.actionConfiguration?.actionArguments?.formId?.name
       );
@@ -75,7 +75,7 @@ const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({childre
         && (item.actionConfiguration?.actionArguments?.formId as FormFullName)?.module
       ) {
         itemsToCheck.push(item);
-      } 
+      }
     });
 
     return itemsToCheck;
@@ -102,24 +102,24 @@ const MainMenuProvider: FC<PropsWithChildren<MainMenuProviderProps>> = ({childre
   const updateMainMenu = (value: IConfigurableMainMenu) => {
     const migratorInstance = new Migrator<IConfigurableMainMenu, IConfigurableMainMenu>();
     const fluent = mainMenuMigration(migratorInstance);
-    const versionedValue = {...value} as IHasVersion;
-    if (versionedValue.version === undefined) 
+    const versionedValue = { ...value } as IHasVersion;
+    if (versionedValue.version === undefined)
       versionedValue.version = -1;
     const model = fluent.migrator.upgrade(versionedValue, {});
     dispatch(setLoadedMenuAction(model as IConfigurableMainMenu));
 
     const itemsToCheck = getItemsWithFormNavigation(model.items);
     if (itemsToCheck.length > 0) {
-      getFormPermissions(model.items, itemsToCheck);
+      getFormPermissions(model?.items, itemsToCheck);
     } else {
-      formPermissionedItems.current = [...model.items];
+      formPermissionedItems.current = [...model?.items];
       dispatch(setItemsAction(getActualItemsModel(formPermissionedItems.current)));
     }
   };
 
   useDeepCompareEffect(() => {
     dispatch(setItemsAction(getActualItemsModel(formPermissionedItems.current)));
-  }, [{...allData}]);
+  }, [{ ...allData }]);
 
 
   useEffect(() => {

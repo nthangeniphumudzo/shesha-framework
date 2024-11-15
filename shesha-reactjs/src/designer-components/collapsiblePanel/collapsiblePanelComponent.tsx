@@ -20,7 +20,7 @@ import { migrateFormApi } from '../_common-migrations/migrateFormApi1';
 import { removeComponents } from '../_common-migrations/removeComponents';
 import { Col, Row } from 'antd';
 import { toSizeCssProp } from '@/utils/form';
-import { useFormDesignerState } from '@/providers/formDesigner';
+import { useFormDesignerActions, useFormDesignerState } from '@/providers/formDesigner';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -32,7 +32,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
   Factory: ({ model }) => {
     const { formMode } = useForm();
     const { data } = useFormData();
-    // const { addComponent, updateComponent } = useFormDesignerActions()
+    const { addComponent, updateComponent } = useFormDesignerActions()
     const { formFlatMarkup } = useFormDesignerState();
     const { globalState } = useGlobalState();
     const {
@@ -60,6 +60,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       const firstColumn = model.columns[0];
       const hasComponents = firstColumn?.components?.length > 0;
 
+
       let hasHeader = false;
 
       if (hasComponents) {
@@ -74,11 +75,11 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         hasHeader = true;
       }
       if (!hasHeader) {
-        // addComponent({
-        //   componentType: 'text',
-        //   containerId: model?.columns[0].id,
-        //   index: 0,
-        // });
+        addComponent({
+          componentType: 'text',
+          containerId: model?.columns[0].id,
+          index: 0,
+        });
       };
     }, []);
 
@@ -95,22 +96,21 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         const component = formFlatMarkup.allComponents[key];
         const parentComponent = formFlatMarkup.allComponents[component?.parentId];
 
-
         if (
           component?.parentId &&
           component?.id &&
           !component?.content
           && (component?.parentId !== firstColumn.id || parentComponent)
         ) {
-
-          // updateComponent({
-          //   ...component,
-          //   componentId: component.id,
-          //   settings: {
-          //     ...component,
-          //     content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
-          //   },
-          // });
+          console.log('hasComponents ::', component.id)
+          updateComponent({
+            ...component,
+            componentId: component.id,
+            settings: {
+              ...component,
+              content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
+            },
+          });
           break;
         }
       }
@@ -159,19 +159,11 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         </Row>
       ) : evaluatedLabel;
 
-    const header = <div style={{
-      position: 'relative',
-    }}>
-      {extra}
-    </div>
-
-
-    console.log("Header ::", model?.header)
 
     return (
       <ParentProvider model={model}>
         <CollapsiblePanel
-          header={header}
+          header={extra}
           expandIconPosition={expandIconPosition !== 'hide' ? (expandIconPosition as ExpandIconPosition) : 'start'}
           collapsedByDefault={collapsedByDefault}
           extra={<></>}
@@ -219,7 +211,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       .add<ICollapsiblePanelComponentProps>(1, (prev, context) => {
         const header = {
           id: nanoid(), components: [
-            prev.columns.map((col, index) => {
+            prev?.columns?.map((col, index) => {
               return (
                 <Col
                   key={index}
@@ -251,8 +243,6 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
             return { ...x, parentId: content.id };
           }) ?? [];
 
-        console.log("header column ::", header)
-
         return {
           ...prev,
           components: undefined,
@@ -277,7 +267,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       .add<ICollapsiblePanelComponentProps>(7, (prev) => {
         const evaluatedLabel = typeof prev?.label === 'string' ? evaluateString(prev?.label, {}) : prev?.label;
         const defaultColumnId = nanoid();
-
+        debugger;
         return {
           ...prev,
           propertyName: 'custom Name',
