@@ -125,7 +125,6 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
     const headerHeight = toSizeCssProp(model.headerHeight)
 
     const getPanelStyle = {
-      backgroundColor: headerColor,
       ...pickStyleFromModel(styling),
       ...(executeFunction(model?.style, { data, globalState }) || {}),
     };
@@ -175,6 +174,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
           className={model.className}
           bodyColor={bodyColor}
           readonly={formMode !== 'designer'}
+          headerColor={headerColor}
           isSimpleDesign={isSimpleDesign}
           hideCollapseContent={hideCollapseContent}
           hideWhenEmpty={hideWhenEmpty}

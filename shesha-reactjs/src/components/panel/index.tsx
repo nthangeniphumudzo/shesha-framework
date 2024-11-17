@@ -19,6 +19,7 @@ export interface ICollapsiblePanelProps extends CollapseProps {
   noContentPadding?: boolean;
   loading?: boolean;
   collapsedByDefault?: boolean;
+  headerColor?: string;
   bodyColor?: string;
   isSimpleDesign?: boolean;
   hideCollapseContent?: boolean;
@@ -54,6 +55,7 @@ const StyledCollapse: any = styled(Collapse) <
     justify-content: center;
     align-items: center;
     height: ${({ headerHeight }) => (headerHeight ? headerHeight : '50px')};
+    background-color: ${({ headerColor }) => headerColor} !important;;
   }
 
   .ant-collapse-content {
@@ -80,6 +82,7 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
   collapsible,
   ghost,
   bodyColor = 'unset',
+  headerColor = 'unset',
   isSimpleDesign,
   hideCollapseContent,
   hideWhenEmpty = false,
@@ -90,7 +93,7 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
 }) => {
   // Prevent the CollapsiblePanel from collapsing every time you click anywhere on the extra and header
   const onContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
-  const { styles } = useStyles({borderRadius: dynamicBorderRadius});
+  const { styles } = useStyles({ borderRadius: dynamicBorderRadius });
   const [parentPanel, setParentPanel] = useState(false);
   const panelRef = useRef(null);
 
@@ -121,6 +124,7 @@ export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'r
       ghost={ghost}
       bodyColor={bodyColor}
       parentPanel={parentPanel}
+      headerColor={headerColor}
       hideCollapseContent={hideCollapseContent}
       headerHeight={headerHeight}
     >
