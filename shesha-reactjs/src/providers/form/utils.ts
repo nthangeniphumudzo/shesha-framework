@@ -520,6 +520,7 @@ export const componentsFlatStructureToTree = (
     const componentIds = flat.componentRelations[ownerId];
 
     if (!componentIds) return;
+
     const ownerComponent = flat.allComponents[ownerId];
     const ownerDefinition = ownerComponent && ownerComponent.type
       ? toolboxComponents[ownerComponent.type]

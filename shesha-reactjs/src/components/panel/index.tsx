@@ -63,7 +63,12 @@ const StyledCollapse: any = styled(Collapse) <
       background-color: ${({ bodyColor }) => bodyColor};
     }
   }
+  .ant-collapse-icon-position-end>.ant-collapse-item >.ant-collapse-header .ant-collapse-expand-icon {
+    margin-right: 10px !important;
+  }
 `;
+
+
 
 
 export const CollapsiblePanel: FC<Omit<ICollapsiblePanelProps, 'radiusLeft' | 'radiusRight'>> = ({

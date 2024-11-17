@@ -119,7 +119,10 @@ export const useStyles = createStyles(({ css, cx, token, prefixCls }, { borderRa
       .${prefixCls}-collapse-arrow {
         padding-top: 3px !important;
         margin-top: -3px !important;
-      }    
+      } 
+      .ant-collapse-expand-icon{
+        margin-right:10px;
+      }   
     `);
 
   return {

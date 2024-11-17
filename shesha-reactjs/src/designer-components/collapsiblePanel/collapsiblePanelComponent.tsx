@@ -6,11 +6,11 @@ import { IToolboxComponent } from '@/interfaces';
 import { useFormData, useGlobalState } from '@/providers';
 import { useForm } from '@/providers/form';
 import { FormMarkup } from '@/providers/form/models';
-import { evaluateString, getLayoutStyle, pickStyleFromModel, validateConfigurableComponentSettings } from '@/providers/form/utils';
+import { evaluateString, pickStyleFromModel, validateConfigurableComponentSettings } from '@/providers/form/utils';
 import { GroupOutlined } from '@ant-design/icons';
 import { ExpandIconPosition } from 'antd/lib/collapse/Collapse';
 import { nanoid } from '@/utils/uuid';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ICollapsiblePanelComponentProps, ICollapsiblePanelComponentPropsV0 } from './interfaces';
 import settingsFormJson from './settingsForm.json';
 import { ColumnsSettingsForm } from './collapsibleSettings';
@@ -18,10 +18,7 @@ import { executeFunction } from '@/utils';
 import ParentProvider from '@/providers/parentProvider/index';
 import { migrateFormApi } from '../_common-migrations/migrateFormApi1';
 import { removeComponents } from '../_common-migrations/removeComponents';
-import { Col, Row } from 'antd';
 import { toSizeCssProp } from '@/utils/form';
-import { useFormDesignerActions, useFormDesignerState } from '@/providers/formDesigner';
-
 const settingsForm = settingsFormJson as FormMarkup;
 
 const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentProps> = {
@@ -32,8 +29,6 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
   Factory: ({ model }) => {
     const { formMode } = useForm();
     const { data } = useFormData();
-    const { addComponent, updateComponent } = useFormDesignerActions()
-    const { formFlatMarkup } = useFormDesignerState();
     const { globalState } = useGlobalState();
     const {
       label,
@@ -45,77 +40,10 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       headerColor,
       isSimpleDesign,
       hideCollapseContent,
-      hideWhenEmpty,
-      columns,
-      gutterX,
-      gutterY
+      hideWhenEmpty
     } = model;
 
     const evaluatedLabel = typeof label === 'string' ? evaluateString(label, data) : label;
-
-
-    useEffect(() => {
-      if (!model?.columns?.length) return;
-
-      const firstColumn = model.columns[0];
-      const hasComponents = firstColumn?.components?.length > 0;
-
-
-      let hasHeader = false;
-
-      if (hasComponents) {
-        for (const key in formFlatMarkup?.allComponents) {
-          if (formFlatMarkup?.allComponents[key]?.parentId === model?.columns[0]?.id
-          ) {
-            hasHeader = true;
-            break;
-          }
-        };
-      } else {
-        hasHeader = true;
-      }
-      if (!hasHeader) {
-        addComponent({
-          componentType: 'text',
-          containerId: model?.columns[0].id,
-          index: 0,
-        });
-      };
-    }, []);
-
-    useEffect(() => {
-      if (!model?.columns?.length) return;
-
-      const firstColumn = model.columns[0];
-      const firstComponent = firstColumn.components?.[0];
-
-      if (firstComponent?.type !== 'text') return;
-
-      for (const key in formFlatMarkup?.allComponents) {
-
-        const component = formFlatMarkup.allComponents[key];
-        const parentComponent = formFlatMarkup.allComponents[component?.parentId];
-
-        if (
-          component?.parentId &&
-          component?.id &&
-          !component?.content
-          && (component?.parentId !== firstColumn.id || parentComponent)
-        ) {
-          console.log('hasComponents ::', component.id)
-          updateComponent({
-            ...component,
-            componentId: component.id,
-            settings: {
-              ...component,
-              content: parentComponent?.components?.[0]?.settings?.content || firstComponent?.settings?.content,
-            },
-          });
-          break;
-        }
-      }
-    }, [Object.keys(formFlatMarkup?.allComponents).length]);
-
 
 
     if (model.hidden) return null;
@@ -132,40 +60,34 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
 
 
 
-    const extra =
-      columns?.length > 0 || formMode === 'designer' ? (
-        <Row gutter={[gutterX, gutterY]} style={getLayoutStyle(model, { data, globalState })}>
-          {columns &&
-            columns.map((col, index) => {
-              return (
-                <Col
-                  key={index}
-                  md={col.flex}
-                  offset={col.offset}
-                  pull={col.pull}
-                  push={col.push}
-                  className="sha-designer-column"
-                >
-                  <ComponentsContainer
-                    containerId={col.id}
+    const headerComponents = model?.header?.components ?? [];
 
-                    dynamicComponents={(model?.isDynamic) ? col?.components : []}
-                  />
-                </Col>
-              )
-            }
-            )}
-        </Row>
-      ) : evaluatedLabel;
+    const hasCustomHeader = model?.hasCustomHeader;
+
+    const extra =
+      ((headerComponents?.length > 0 || formMode === 'designer') && !hasCustomHeader) ? (
+        <ComponentsContainer
+          containerId={model.header?.id}
+          direction="horizontal"
+          dynamicComponents={model?.isDynamic ? model.header?.components : []}
+        />
+      ) : null;
+
 
 
     return (
       <ParentProvider model={model}>
         <CollapsiblePanel
-          header={extra}
+          header={hasCustomHeader ?
+            <ComponentsContainer
+              containerId={model.customHeader.id}
+              dynamicComponents={(model?.isDynamic) ? model?.customHeader?.components : []}
+            /> :
+            evaluatedLabel
+          }
           expandIconPosition={expandIconPosition !== 'hide' ? (expandIconPosition as ExpandIconPosition) : 'start'}
           collapsedByDefault={collapsedByDefault}
-          extra={<></>}
+          extra={extra}
           collapsible={collapsible === 'header' ? 'header' : 'icon'}
           showArrow={collapsible !== 'disabled' && expandIconPosition !== 'hide'}
           ghost={ghost}
@@ -209,29 +131,7 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         };
       })
       .add<ICollapsiblePanelComponentProps>(1, (prev, context) => {
-        const header = {
-          id: nanoid(), components: [
-            prev?.columns?.map((col, index) => {
-              return (
-                <Col
-                  key={index}
-                  md={col.flex}
-                  offset={col.offset}
-                  pull={col.pull}
-                  push={col.push}
-                  className="sha-designer-column"
-                >
-                  <ComponentsContainer
-                    containerId={col.id}
-
-                    dynamicComponents={(prev?.isDynamic) ? col?.components : []}
-                  />
-                </Col>
-              )
-            }
-            )
-          ]
-        };
+        const header = { id: nanoid(), components: [] };
         const content = { id: nanoid(), components: [] };
 
         delete context.flatStructure.componentRelations[context.componentId];
@@ -246,8 +146,8 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
         return {
           ...prev,
           components: undefined,
-          header,
           content,
+          header,
           collapsible: 'icon',
         };
       })
@@ -264,38 +164,15 @@ const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelComponentPro
       .add<ICollapsiblePanelComponentProps>(4, (prev) => migrateVisibility(prev))
       .add<ICollapsiblePanelComponentProps>(5, (prev) => ({ ...migrateFormApi.properties(prev) }))
       .add<ICollapsiblePanelComponentProps>(6, (prev) => removeComponents(prev))
-      .add<ICollapsiblePanelComponentProps>(7, (prev) => {
-        const evaluatedLabel = typeof prev?.label === 'string' ? evaluateString(prev?.label, {}) : prev?.label;
-        const defaultColumnId = nanoid();
-        debugger;
-        return {
-          ...prev,
-          propertyName: 'custom Name',
-          columns: [
-            {
-              id: defaultColumnId, flex: 12, offset: 0, push: 0, pull: 0, components: [
-                {
-                  type: 'text',
-                  id: nanoid(),
-                  parentId: defaultColumnId,
-                  settings: {
-                    content: evaluatedLabel,
-                  },
-                }
-              ]
-            },
-            { id: nanoid(), flex: 12, offset: 0, push: 0, pull: 0, components: [] },
-          ],
-          gutterX: 12,
-          gutterY: 12,
-        }
+      .add<ICollapsiblePanelComponentProps>(7, (prev) => ({
+        ...prev,
+        customHeader: { id: nanoid(), components: [] }
+      }))
 
-      }
-      )
 
 
   ,
-  customContainerNames: ['header', 'content', 'columns'],
+  customContainerNames: ['header', 'content', 'customHeader'],
 };
 
 export default CollapsiblePanelComponent;

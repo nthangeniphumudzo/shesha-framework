@@ -334,17 +334,20 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
       action: ReduxActions.Action<IComponentUpdatePayload>
     ) => {
       const { payload } = action;
-
       const { formFlatMarkup } = state;
+
       const component = formFlatMarkup.allComponents[payload.componentId];
       const newComponent = { ...component, ...payload.settings } as IConfigurableFormComponent;
-
-      const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, (c) => c.type === component.type);
+      console.log("componentType ::", payload.componentId, component)
+      const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, (c) => {
+        return c.type === component.type
+      });
 
       const newComponents = { ...formFlatMarkup.allComponents, [payload.componentId]: newComponent };
       const componentRelations = { ...formFlatMarkup.componentRelations };
 
       if (toolboxComponent.getContainers) {
+        debugger;
         // update child components
 
         const oldContainers = toolboxComponent.getContainers(component);

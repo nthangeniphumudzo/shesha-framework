@@ -25,7 +25,7 @@ const ColumnsSettings: FC<ISettingsFormFactoryArgs<IColumnsComponentProps>> = (p
         <SettingsFormItem name="label" label="Label" hidden>
           <Input readOnly={readOnly} />
         </SettingsFormItem>
-        <SettingsFormItem name="customHeader" valuePropName="checked" jsSetting label="Custom Header">
+        <SettingsFormItem name="hasCustomHeader" valuePropName="checked" jsSetting label="Custom Header">
           <Checkbox disabled={readOnly} />
         </SettingsFormItem>
         <SettingsFormItem name="expandIconPosition" label="Icon position" jsSetting>

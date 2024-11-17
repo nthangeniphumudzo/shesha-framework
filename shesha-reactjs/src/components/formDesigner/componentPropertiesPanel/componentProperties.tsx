@@ -23,7 +23,7 @@ export const ComponentProperties: FC<IComponentPropertiesEditrorProps> = (props)
     const { componentModel, readOnly, toolboxComponent } = props;
     const { id } = componentModel;
     const { updateComponent } = useFormDesignerActions();
-    
+
     const { formProps } = useFormPersister();
 
     const onSave = useCallback(values => {

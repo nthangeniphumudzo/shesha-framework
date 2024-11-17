@@ -288,8 +288,6 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
     /* NEW_ACTION_GOES_HERE */
   ]);
 
-  console.log("formMarkup", formFlatMarkup);
-
   return (
     <UndoableFormDesignerStateContext.Provider value={state}>
       <FormDesignerStateContext.Provider value={statePresent}>
