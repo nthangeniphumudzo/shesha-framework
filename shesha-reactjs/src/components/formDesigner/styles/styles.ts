@@ -39,6 +39,9 @@ const designerClassNames = {
     sidebarContainerMainAreaBody: "sidebar-container-main-area-body",
     sidebarHeaderTitle: "sidebar-header-title",
     siteTreeSearchValue: "site-tree-search-value",
+    formName: "form-name",
+    formTitle: "form-title",
+    formNameParent: "form-name-parent",
 };
 const useStylesResponse = {
     styles: designerClassNames,
@@ -52,7 +55,6 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
         shaHelpIcon,
         shaDragging,
         componentDragHandle,
-        previewBorderTop10,
         sidebarContainerMainAreaBody,
         shaDesignerToolbar,
         shaToolboxComponents,
@@ -84,14 +86,24 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
         shaComponentValidationIcon,
         shaDesignerHeaderRight,
         shaForm,
+        formName,
+        formTitle,
+        formNameParent,
         //mainArea,
     } = useStyles().styles;
 
     const quickEditModal = cx("sha-designer-modal", css`
+        .${prefixCls}-modal {
+            overflow-y: hidden;
+        }
         .${prefixCls}-modal-content {
             padding: 0;
+            margin-top: -84px;
+            overflow-y: hidden;
+            height: calc(100vh - 40px);
+            scrollbar-width: none;
             .${prefixCls}-modal-header {
-                padding: 16px 24px;
+                padding: 8px 12px;
                 margin: 0;
                 border-bottom: ${sheshaStyles.border};
             }
@@ -127,9 +139,6 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
    `);
     */
     const formDesigner = cx(formDesignerClassName, css`
-        .${previewBorderTop10} {
-            border-top: 1px solid #d3d3d3;
-        }
         .${shaHelpIcon} {
             cursor: help;
             font-size: 14px;
@@ -164,10 +173,37 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
         }
         .${shaDesignerToolbar} {
             background: white;
-            padding: 12px;
+            padding: 8px 12px 0px 12px;
             display: flex;
             justify-content: space-between;
-        
+
+            .${formName} {
+                margin-left: -95px;
+                margin-top: 13px;
+                overflow: visible;
+                display: flex;
+                flex-direction: row;
+                cursor: pointer;
+                user-select: none;
+                transition: 0.2s;
+            }
+            .${formTitle} {
+                margin: 0;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                font-weight: 600;
+                margin-left: 100px;
+                max-width: 150px;
+            }
+
+            .${formNameParent} {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                margin-top: -10px;
+            }
+
             .${shaDesignerToolbarLeft} {
                 float: left;
         
@@ -183,17 +219,11 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
                 }
             }
 
-
             .${shaDesignerToolbarCenter} {
                 width: 180px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                    small {
-                        align-content: center;
-                        align-items: center;
-                        width: 170px;
-                    }
             }
             .${shaDesignerCanvasConfig} {
                 display: flex;
@@ -270,7 +300,7 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
                 }
                 .${shaToolboxPanelItems} {
                     margin:-1rem -0.8rem;
-            }
+                }
             }
         
             .${shaToolboxComponent} {
@@ -350,10 +380,7 @@ export const useMainStyles = createStyles(({ css, cx, token, prefixCls, iconPref
         .${shaComponentGhost} {
             border: 1px dashed ${token.colorPrimary};
             border-radius: 2px;
-            opacity: 0.7;
-
-          
-
+            opacity: 0.7;        
         }
         .${shaToolboxPanelComponents}{
             margin: -1rem -0.8rem;
